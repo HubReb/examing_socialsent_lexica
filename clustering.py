@@ -17,7 +17,6 @@ subreddits. For now, all clustering algorithms are applied.
 import os
 import numpy as np
 import csv
-import matplotlib
 import sklearn.cluster as cluster
 import spacy
 import hdbscan
