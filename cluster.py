@@ -4,6 +4,7 @@
 import hdbscan
 import sklearn.cluster as cluster
 import numpy as np
+import os
 
 from subreddit_data import SubredditData
 
@@ -19,7 +20,7 @@ def cluster_data(data, algorithm, args, kwds, name):
         view: sentiment view (normal, maximum, normal, all)
     """
     labels = algorithm(*args, **kwds).fit_predict(data)
-    np.save(name+"_labels.npy", labels)
+    np.save("results/"+name+"_labels.npy", labels)
 
 def start_cluster(data, view, times):
     """
@@ -32,6 +33,8 @@ def start_cluster(data, view, times):
             maximum number of clusters to be used for KMeans, spectral and
             agglomerative clustering
         """
+    if not os.path.exists("results"):
+        os.makedirs("results")
     for number in range(3, times):
         cluster_data(
             data[view],
