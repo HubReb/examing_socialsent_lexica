@@ -1,3 +1,5 @@
+#! /usr/bin/env python3
+# -*- coding: utf-8 -*-
 
 import hdbscan
 import sklearn.cluster as cluster
@@ -21,7 +23,7 @@ def cluster_data(data, algorithm, args, kwds, name):
 
 def start_cluster(data, view, times):
     """
-    Method to start clustering, resutls are saved in a seperate file
+    Function to start clustering, resutls are saved in a seperate file
 
     Arguments:
         view: whether to use original sentiments (normal), negative values (minimum),
