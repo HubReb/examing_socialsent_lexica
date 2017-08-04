@@ -41,35 +41,35 @@ def start_cluster(data, view, times):
             cluster.MiniBatchKMeans,
             (),
             {'n_clusters':number},
-            "mini_batch_kmeans"+str(number)+view,
+            view + "_miniBatchKmeans_"+str(number)
         )
         cluster_data(
             data[view],
             cluster.SpectralClustering,
             (),
             {'n_clusters':number},
-            "spectral"+str(number)+view,
+            view + "_spectral_"+str(number)
         )
         cluster_data(
             data[view],
             cluster.AgglomerativeClustering,
             (),
             {'n_clusters':number, 'linkage':'ward'},
-            "aggl" + str(number) + view,
+            view + "_aggl_" + str(number)
         )
     cluster_data(
         data[view],
         cluster.MeanShift,
         (0.175,),
         {'cluster_all':False},
-        "mean_shift" + view,
+         view + "_meanShift"
     )
     cluster_data(
         data[view],
         hdbscan.HDBSCAN,
         (),
         {'min_cluster_size':15},
-        "HDBSCAN" + view,
+         view + "_HDBSCAN"
     )
 
 if __name__ == '__main__':
