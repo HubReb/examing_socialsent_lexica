@@ -32,7 +32,7 @@ class SubredditData:
             dictionary of views (normal, min, max, all) containing feature vectors
             of all subreddits
         order:
-            list representing the order of the word in each feature vector
+            list representing the order of the subreddits in the sentiment dictionary
     """
 
     def __init__(self, path):
@@ -54,6 +54,7 @@ class SubredditData:
             "all" : []
         }
         self.set_sentiments(words)
+        self.save_order()
 
     def set_sentiments(self, words):
         """Process sentiments in all subreddits, thus create feature matrix
@@ -62,6 +63,7 @@ class SubredditData:
             words: list of all words used in the subreddits
         """
         for sent in self.subreddits.keys():
+            self.order.append(sent)
             normal, maximum, minimum, sentiment_all = self.get_sentiment(words, sent)
             self.sentiments["normal"].append(normal)
             self.sentiments["maximum"].append(maximum)
@@ -161,8 +163,8 @@ class SubredditData:
             with open("words.txt") as f:
                 words = f.read().split("\n")
         else:
-            print("Need to get all words in subreddits first. This will take up to 2 hours.")
-            words = self.get_words_from_scratch(subreddits)
+            print("Need to get all words in subreddits first. This will take a while.")
+            words = self.get_words_from_scratch(files)
         return words
 
     def get_words_from_scratch(self, files):
@@ -185,6 +187,10 @@ class SubredditData:
             f.write("\n".join(words))
         return words
 
+    def save_order(self):
+        """ save order of reddits in featurevectors """
+        with open("order_subreddits.txt", "w") as f:
+            f.write("\n".join(self.order))
 
 
 if __name__ == '__main__':
