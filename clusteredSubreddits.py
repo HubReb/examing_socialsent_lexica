@@ -58,7 +58,7 @@ class ClusteredSubreddits:
         for cluster_file in data:
             path_file = path + cluster_file
             view, algorithm, number_of_clusters = cluster_file.split('_')[0:3]
-            if number_of_clusters != '':
+            if number_of_clusters != 'labels.npy':
                 self.clusters[view][algorithm][int(number_of_clusters)] = np.load(path_file)
             else:
                 self.clusters[view][algorithm] = np.load(path_file)
@@ -73,7 +73,10 @@ class ClusteredSubreddits:
     def view_hist_of_cluster(self, algorithm, view, number_of_clusters=0):
         ''' Return np.histogram of labels '''
         array = self.view_cluster(algorithm, view, number_of_clusters)
-        return np.histogram(array, bins=number_of_clusters)
+        if number_of_clusters != 0:
+            return np.histogram(array, bins=number_of_clusters)
+        return np.histogram(array)
+
 
     def get_subreddit_order(self):
         ''' Return order of the feature vectors in matrix '''
@@ -86,54 +89,4 @@ class ClusteredSubreddits:
             words = f.read()
         return words
 
-def evaluate_time_clusters(data, view, times, algorithm):
-    old_result = data.view_cluster(algorithm, view, 3)
-    #print(old_result)
-    for time in range(4, times):
-    #    print('Comparing next pair: ')
-        result = data.view_cluster(algorithm, view, time)
-        print(data.view_hist_of_cluster(algorithm, view, time))
-        if np.array_equal(result, old_result):
-            print('No change despite increasing number of clusters')
-            continue
-        print('Change: ')
-        print('Clusters: ')
-   #     print(old_result, result)
-        print('Differences: ')
-        print(result - old_result)
-        old_result = np.array(result)
 
-def evaluate_clusters(data, view, algorithm):
-    result = data.view_cluster(algorithm, view)
-    print(data.view_hist_of_cluster(algorithm, view))
-    print(result)
-
-
-def evaluateMiniBatch(data, view, times):
-    evaluate_time_clusters(data, view, times, 'miniBatchKmeans')
-
-def evaluateAgg(data, view, times):
-    evaluate_time_clusters(data, view, times, 'aggl')
-
-def evaluateSpectral(data, view, times):
-    evaluate_time_clusters(data, view, times, 'spectral')
-
-def evaluateMeanShift(data):
-    evaluate_clusters(data, view, 'meanShift')
-
-def evaluateHDBSCAN(data):
-    evaluate_clusters(data, view, 'HDBSCAN')
-
-if __name__ == '__main__':
-    from sys import argv
-    path = '/home/students/hubert/socialsent/socialsent/socialsent/data/lexicons/subreddits'
-    clusters = ClusteredSubreddits(path)
-    evaluateMiniBatch(clusters, argv[1], 200)
-    print('AGGL\n', '__' * 30)
-    evaluateAgg(clusters, argv[1], 200)
-    print('SPECTRAL\n', '__' *30)
-    evaluateSpectral(clusters, argv[1], 200)
-    print('MEANSHIFT\n', '__' *30)
-    evaluateMeanShift(clusters, argv[1])
-    print('HDBSCAN\n', '__' *30)
-    evaluateHDBSCAN(clusters, argv[1])
