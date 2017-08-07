@@ -15,30 +15,48 @@ Further evaluation methods will be implemented later.
 '''
 
 import numpy as np
+from collections import defaultdict
+from sklearn.metrics import pairwise_distances_argmin_min
 
 from clusteredSubreddits import ClusteredSubreddits
 
-def evaluate_time_clusters(data, view, times, algorithm):
+def evaluate_time_clusters_changes(data, view, times, algorithm):
     ''' basic evaluation of algorithms with manually selected n. of clusters '''
     old_result = data.view_cluster(algorithm, view, 3)
-    #print(old_result)
+    print(old_result)
     for time in range(4, times):
+        print('\n', '----' * 38, "\nusing %s clusters" % time)
     #    print('Comparing next pair: ')
         result = data.view_cluster(algorithm, view, time)
         print(data.view_hist_of_cluster(algorithm, view, time))
-        if np.array_equal(result, old_result):
+        if result ==  old_result:
             print('No change despite increasing number of clusters')
             continue
         print('Change: ')
         print('Clusters: ')
-   #     print(old_result, result)
-        print('Differences: ')
-        print(result - old_result)
-        old_result = np.array(result)
+        for i, key in enumerate(result.keys()):
+            print('Cluster %i: %s' % ((i + 1), ', '.join(result[key])))
+
+def evaluate_time_clusters(data, view, times, algorithm):
+    ''' basic evaluation of algorithms with manually selected n. of clusters '''
+    time_result = {}
+    for time in range(3, times):
+        result = data.view_cluster(algorithm, view, time)
+        number_of_cluster = time
+        res = defaultdict(list)
+        for number, resu in enumerate(result):
+            res[resu].append(number)
+            time_result[number_of_cluster] = res
+    print(time_result)
+
 
 def evaluate_clusters(data, view, algorithm):
     '''evaluation algorithm for algorithms selecting n. of clusters automatically'''
     result = data.view_cluster(algorithm, view)
+    res = defaultdict(list)
+    for number, resu in enumerate(result):
+        res[resu].append(number)
+    print(res)
     print(data.view_hist_of_cluster(algorithm, view))
     print(result)
 
@@ -47,7 +65,7 @@ def evaluateMiniBatch(data, view, times):
     evaluate_time_clusters(data, view, times, 'miniBatchKmeans')
 
 def evaluateAgg(data, view, times):
-    evaluate_time_clusters(data, view, times, 'aggl')
+    evaluate_time_clusters_changes(data, view, times, 'aggl')
 
 def evaluateSpectral(data, view, times):
     evaluate_time_clusters(data, view, times, 'spectral')
@@ -65,7 +83,7 @@ if __name__ == '__main__':
         exit()
     path = '/home/students/hubert/socialsent/socialsent/socialsent/data/lexicons/subreddits'
     clusters = ClusteredSubreddits(path)
-    evaluateMiniBatch(clusters, argv[1], 200)
+    #evaluateMiniBatch(clusters, argv[1], 200)
     print('AGGL\n', '__' * 30)
     evaluateAgg(clusters, argv[1], 200)
     print('SPECTRAL\n', '__' *30)

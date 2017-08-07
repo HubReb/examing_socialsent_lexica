@@ -40,6 +40,7 @@ class ClusteredSubreddits:
             'all' : {}
             }
         algorithms = ['meanShift', 'HDBSCAN', 'aggl', 'spectral', 'miniBatchKmeans']
+        self.order = self.get_order()
         self.set_clusters(algorithms)
         path = path + '/results'
         clustered_data = os.listdir(path)
@@ -52,6 +53,10 @@ class ClusteredSubreddits:
             for view in self.clusters.keys():
                 self.clusters[view][algorithm] = {}
 
+    def get_order(self):
+        with open('order_subreddits.txt') as f:
+            return f.read().split('\n')
+
     def get_clusters(self, data, path):
         ''' Access results of clustering algorithms and store them clusters '''
         path = path + '/'
@@ -63,16 +68,23 @@ class ClusteredSubreddits:
             else:
                 self.clusters[view][algorithm] = np.load(path_file)
 
-    def view_cluster(self, algorithm, view, number_of_clusters=0):
-        ''' Return result of algorithm (i. e. labels) '''
+    def sort_clusters(self, algorithm, view, number_of_clusters=0):
         if number_of_clusters == 0:
             return self.clusters[view][algorithm]
-        else:
-            return self.clusters[view][algorithm][number_of_clusters]
+        return self.clusters[view][algorithm][number_of_clusters]
+
+    def view_cluster(self, algorithm, view, number_of_clusters=0):
+        ''' Return result of algorithm (i. e. clusters) '''
+        clusters = self.sort_clusters(algorithm, view, number_of_clusters)
+        dictio = defaultdict(list)
+        for d in range(len(self.order)):
+            dictio[clusters[d]].append(self.order[d])
+        return dictio
+
 
     def view_hist_of_cluster(self, algorithm, view, number_of_clusters=0):
         ''' Return np.histogram of labels '''
-        array = self.view_cluster(algorithm, view, number_of_clusters)
+        array = self.sort_clusters(algorithm, view, number_of_clusters)
         if number_of_clusters != 0:
             return np.histogram(array, bins=number_of_clusters)
         return np.histogram(array)
