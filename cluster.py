@@ -36,39 +36,40 @@ def start_cluster(data, view, times):
     if not os.path.exists("results"):
         os.makedirs("results")
     for number in range(3, times):
-        cluster_data(
-            data[view],
-            cluster.MiniBatchKMeans,
-            (),
-            {'n_clusters':number},
-            view + "_miniBatchKmeans_"+str(number)
-        )
-        cluster_data(
-            data[view],
-            cluster.SpectralClustering,
-            (),
-            {'n_clusters':number},
-            view + "_spectral_"+str(number)
-        )
+        # too many dimensions to suse KMeans effectevly
+    #    cluster_data(
+    #        data[view],
+    #        cluster.MiniBatchKMeans,
+    #        (),
+    #        {'n_clusters':number},
+    #        view + "_miniBatchKmeans_"+str(number)
+    #    )
+#        cluster_data(
+#            data[view],
+#            cluster.SpectralClustering,
+#            (),
+#            {'n_clusters':number},
+#            view + "_spectral_"+str(number)
+#        )
         cluster_data(
             data[view],
             cluster.AgglomerativeClustering,
             (),
-            {'n_clusters':number, 'linkage':'ward'},
+            {'n_clusters':number, 'linkage':'average', 'affinity':'cosine'},
             view + "_aggl_" + str(number)
         )
     cluster_data(
         data[view],
         cluster.MeanShift,
         (0.175,),
-        {'cluster_all':False},
+        {'cluster_all':True},
          view + "_meanShift"
     )
     cluster_data(
         data[view],
         hdbscan.HDBSCAN,
         (),
-        {'min_cluster_size':15},
+        {'min_cluster_size':2},
          view + "_HDBSCAN"
     )
 

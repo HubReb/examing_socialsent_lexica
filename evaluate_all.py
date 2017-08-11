@@ -56,9 +56,11 @@ def evaluate_clusters(data, view, algorithm):
     res = defaultdict(list)
     for number, resu in enumerate(result):
         res[resu].append(number)
-    print(res)
-    print(data.view_hist_of_cluster(algorithm, view))
-    print(result)
+    for i, key in enumerate(res.keys()):
+        print('Cluster: %i: %s' % ((i+1), ', '.join(res[key])))
+#    print(res)
+#    print(data.view_hist_of_cluster(algorithm, view))
+#    print(result)
 
 
 def evaluateMiniBatch(data, view, times):
@@ -86,8 +88,8 @@ if __name__ == '__main__':
     #evaluateMiniBatch(clusters, argv[1], 200)
     print('AGGL\n', '__' * 30)
     evaluateAgg(clusters, argv[1], 200)
-    print('SPECTRAL\n', '__' *30)
-    evaluateSpectral(clusters, argv[1], 200)
+    #print('SPECTRAL\n', '__' *30)  # Spectral no goof with many dimensions
+#    evaluateSpectral(clusters, argv[1], 200)
     print('MEANSHIFT\n', '__' *30)
     evaluateMeanShift(clusters, argv[1])
     print('HDBSCAN\n', '__' *30)
