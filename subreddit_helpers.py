@@ -26,9 +26,9 @@ def get_subreddits(files):
             # file is not a subreddit
             continue
         try:
-            with open(subreddit) as subreddit_in_file:
+            with open(subreddit) as f:
                 sub_reddits[subreddit] = {}
-                tsvreader = csv.reader(subreddit_in_file, delimiter="\t")
+                tsvreader = csv.reader(f, delimiter="\t")
                 for line in tsvreader:
                     sentiment = float(line[1])
                     standard_variance = float(line[2])
@@ -47,16 +47,16 @@ def get_words_from_scratch(files):
         if not subreddit.endswith("tsv"):
             continue
         try:
-            with open(subreddit) as subreddit_in_file:
-                tsvreader = csv.reader(subreddit_in_file, delimiter="\t")
+            with open(subreddit) as f:
+                tsvreader = csv.reader(f, delimiter="\t")
                 for line in tsvreader:
                     lemmatized_word = nlp(line[0])
                     words.add(str(lemmatized_word))
         except IOError as exception:
             print(exception)
     words = list(words)
-    with open("words.txt", "w") as words_file:
-        words_file.write("\n".join(words))
+    with open("words.txt", "w") as f:
+        f.write("\n".join(words))
     return words
 
 def get_words(files):
@@ -70,8 +70,8 @@ def get_words(files):
         list of all words in the subreddits
     """
     if "words.txt" in files:
-        with open("words.txt") as words_file:
-            words = words_file.read().split("\n")
+        with open("words.txt") as f:
+            words = f.read().split("\n")
     else:
         print("Need to get all words in subreddits first. This will take a while.")
         words = get_words_from_scratch(files)

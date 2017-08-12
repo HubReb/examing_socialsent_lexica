@@ -5,6 +5,6 @@
 
 def get_subreddit_order():
     ''' Return order of the feature vectors in matrix '''
-    with open('order_subreddits.txt') as order_file:
-        order = order_file.read().split('\n')
+    with open('order_subreddits.txt') as f:
+        order = f.read().split('\n')
     return order
