@@ -1,12 +1,22 @@
 #! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+''' Functions to cluster all subreddits in three ways using different feature vectors.
+    view (feature for each word):
+    - minimum (sentiment - standard derivation)
+    - maximum (sentiment + standard derivation)
+    - normal (sentiment)
+    - all (minimu, normal, maximum)
+'''
+
+import os
 import hdbscan
 import sklearn.cluster as cluster
 import numpy as np
-import os
 
 from subreddit_data import SubredditData
+
+PATH = "/home/students/hubert/socialsent/socialsent/socialsent/data/lexicons/subreddits"
 
 def cluster_data(data, algorithm, args, kwds, name):
     """
@@ -63,19 +73,18 @@ def start_cluster(data, view, times):
         cluster.MeanShift,
         (0.175,),
         {'cluster_all':True},
-         view + "_meanShift"
+        view + "_meanShift"
     )
     cluster_data(
         data[view],
         hdbscan.HDBSCAN,
         (),
         {'min_cluster_size':2},
-         view + "_HDBSCAN"
+        view + "_HDBSCAN"
     )
 
 if __name__ == '__main__':
-    path = "/home/students/hubert/socialsent/socialsent/socialsent/data/lexicons/subreddits"
-    subreddits = SubredditData(path)
+    subreddits = SubredditData(PATH)
     start_cluster(subreddits.sentiments, "normal", 200)
     start_cluster(subreddits.sentiments, "minimum", 200)
     start_cluster(subreddits.sentiments, "maximum", 200)

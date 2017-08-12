@@ -13,14 +13,13 @@ For all other algorithms:
 
 Further evaluation methods will be implemented later.
 '''
-import numpy as np
 from collections import defaultdict
-from sklearn.metrics import pairwise_distances_argmin_min
 
-from clusteredSubreddits import ClusteredSubreddits
+from clustered_subreddits import ClusteredSubreddits
 
 
 ACCEPTABLE_OPTIONS = ["normal", "minimum", "maximum", "all"]
+PATH = '/home/students/hubert/socialsent/socialsent/socialsent/data/lexicons/subreddits'
 
 def evaluate_time_clusters_changes(data, view, times, algorithm):
     ''' basic evaluation of algorithms with manually selected n. of clusters '''
@@ -31,7 +30,7 @@ def evaluate_time_clusters_changes(data, view, times, algorithm):
         print('\n', '----' * 38, "\nusing %s clusters" % time)
         result = data.view_cluster(algorithm, view, time)
         print(data.view_hist_of_cluster(algorithm, view, time))
-        if result ==  old_result:
+        if result == old_result:
             print('No change despite increasing number of clusters')
             continue
         for i, key in enumerate(result.keys()):
@@ -57,31 +56,36 @@ def evaluate_clusters(data, view, algorithm):
         print('Cluster: %i: %s' % ((i+1), ', '.join(result[key])))
 
 
-def evaluateMiniBatch(data, view, times):
+def evaluate_mini_batch(data, view, times):
+    ''' evaluate clusters computed with mini batch kmeans '''
     evaluate_time_clusters(data, view, times, 'miniBatchKmeans')
 
-def evaluateAgg(data, view, times):
+def evaluate_agg(data, view, times):
+    ''' evaluate clusters computed with agglomerative clustering '''
     evaluate_time_clusters_changes(data, view, times, 'aggl')
 
-def evaluateSpectral(data, view, times):
+def evaluate_spectral(data, view, times):
+    ''' evaluate clusters computed with spectral clustering '''
     evaluate_time_clusters(data, view, times, 'spectral')
 
-def evaluateMeanShift(data, view):
+def evaluate_mean_shift(data, view):
+    ''' evaluate clusters computed with meanShift algorithm '''
     evaluate_clusters(data, view, 'meanShift')
 
-def evaluateHDBSCAN(data, view):
+def evaluate_hdbscan(data, view):
+    ''' evaluate clusters computed with HDBSCAN algorithm '''
     evaluate_clusters(data, view, 'HDBSCAN')
 
 if __name__ == '__main__':
-    from sys import argv, exit
-    if len(argv) < 2 or argv[1] not in ACCEPTABLE_OPTIONS:
+    import sys
+    import sys
+    if len(sys.argv) < 2 or sys.argv[1] not in ACCEPTABLE_OPTIONS:
         print("usage: python3 evaluate_methods.py normal|maximum|all|minimum")
-        exit()
-    path = '/home/students/hubert/socialsent/socialsent/socialsent/data/lexicons/subreddits'
-    clusters = ClusteredSubreddits(path)
+        sys.exit()
+    clusters = ClusteredSubreddits(PATH)
     print('AGGL\n', '__' * 30)
-    evaluateAgg(clusters, argv[1], 200)
+    evaluate_agg(clusters, sys.argv[1], 200)
     print('MEANSHIFT\n', '__' *30)
-    evaluateMeanShift(clusters, argv[1])
+    evaluate_mean_shift(clusters, sys.argv[1])
     print('HDBSCAN\n', '__' *30)
-    evaluateHDBSCAN(clusters, argv[1])
+    evaluate_hdbscan(clusters, sys.argv[1])

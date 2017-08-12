@@ -13,13 +13,13 @@ for each reddit. There are four types of feature vectores created:
 For each view all feature vectors are clustered to detec similarities between the
 subreddits. For now, all clustering algorithms are applied.
 '''
-
-import os
-import numpy as np
 import csv
 import spacy
 import json
+import os
+import numpy as np
 
+PATH = "/home/students/hubert/socialsent/socialsent/socialsent/data/lexicons/subreddits"
 
 class SubredditData:
     """
@@ -74,8 +74,8 @@ class SubredditData:
 
     def transform_sentiments(self):
         """ Transform list of list of word sentiments into a numpy array """
-        for view in self.sentiments.keys():
-            self.sentiments[view] = np.array(self.sentiments[view])
+        for view, values in self.sentiments.items():
+            self.sentiments[view] = np.array(values)
 
     def get_sentiment(self, words, sent):
         """
@@ -98,7 +98,7 @@ class SubredditData:
         sentiment_all = []
         for word in words:
             if word not in self.subreddits[sent].keys():
-                sentiment_min, sentiment, sentiment_max = 0, 0,0
+                sentiment_min, sentiment, sentiment_max = 0, 0, 0
             else:
                 sentiment, variance = self.subreddits[sent][word]
                 sentiment_min = round(sentiment - variance, 2)
@@ -113,7 +113,7 @@ class SubredditData:
         """ simple check of dimensions of the feature matrices """
         normal = self.sentiments["normal"]
         if len(normal) != len(self.sentiments["minimum"]):
-                raise AssertionError("Length of sentiments is not equal")
+            raise AssertionError("Length of sentiments is not equal")
         if len(normal) != len(self.sentiments["all"]):
             raise AssertionError("Length of sentiment vectors is not correct!")
 
@@ -194,6 +194,5 @@ class SubredditData:
 
 
 if __name__ == '__main__':
-    path = "/home/students/hubert/socialsent/socialsent/socialsent/data/lexicons/subreddits"
-    subreddits = SubredditData(path)
+    subreddits = SubredditData(PATH)
     print("Subreddit Class works!")
