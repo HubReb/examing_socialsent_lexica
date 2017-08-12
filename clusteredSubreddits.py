@@ -4,7 +4,7 @@
 '''
 Extract all labels created by the clustering algorithms and store them in a single
 ClusteredSubreddits object.
-Each cluster can be accesed via view(:number of cluser) key.
+Each cluster can be accesed via view(:number of cluster) key.
 For now, no specific comparision method is implemented
 '''
 
@@ -100,5 +100,3 @@ class ClusteredSubreddits:
         with open('words.txt') as f:
             words = f.read()
         return words
-
-
