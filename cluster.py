@@ -71,8 +71,8 @@ def start_cluster(data, view, times):
     cluster_data(
         data[view],
         cluster.MeanShift,
-        (0.175,),
-        {'cluster_all':True},
+        (),
+        {'min_bin_freq':2, 'cluster_all':True},
         view + "_meanShift"
     )
     cluster_data(
