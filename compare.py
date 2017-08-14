@@ -16,7 +16,6 @@ def prettier_print(dictionary):
     for key, value in dictionary.items():
         print('-'*48, '\nCluster %i: ' % key)
         for cluster in value:
-            print(cluster)
             print(', '.join(cluster))
 
 def compare_results(clusters_one, clusters_two):
