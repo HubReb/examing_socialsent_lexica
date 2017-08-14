@@ -16,6 +16,7 @@ def prettier_print(dictionary):
     for key, value in dictionary.items():
         print('-'*48, '\nCluster %i: ' % key)
         for cluster in value:
+            print(cluster)
             print(', '.join(cluster))
 
 def compare_results(clusters_one, clusters_two):
@@ -23,14 +24,22 @@ def compare_results(clusters_one, clusters_two):
     clusters_one = get_clusters(clusters_one)
     clusters_two = get_clusters(clusters_two)
     different_cluster = {}
-    for number_of_clusters, clusters in clusters_one.items():
-        if set(clusters) != set(clusters_two[number_of_clusters]):
-            different_cluster[number_of_clusters] = (clusters, clusters_two[number_of_clusters])
+    try:
+        for number_of_clusters, clusters in clusters_one.items():
+            if set(clusters) != set(clusters_two[number_of_clusters]):
+                different_cluster[number_of_clusters] = (clusters, clusters_two[number_of_clusters])
+    except IndexError:
+        print('Unenven number of clusters! Use evalualte_all.py for comparisions.')
+        return {}
     return different_cluster
 
 def get_clusters(clusters):
     ''' Returns result of a clustering algorithm'''
-    calculated_clusters = evaluate_clusters(clusters[0], clusters[1], clusters[2], int(clusters[3]))
+    number_of_clusters = int(clusters[3])
+    if number_of_clusters <= 2:
+        return evaluate_clusters(clusters[0], clusters[1], clusters[2])
+    else:
+        calculated_clusters = evaluate_clusters(clusters[0], clusters[1], clusters[2], int(clusters[3]))
     return calculated_clusters[int(clusters[3])-2]
 
 if __name__ == '__main__':
