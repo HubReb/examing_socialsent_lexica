@@ -15,8 +15,7 @@ import sklearn.cluster as cluster
 import numpy as np
 
 from subreddit_data import SubredditData
-
-PATH = "/home/students/hubert/socialsent/socialsent/socialsent/data/lexicons/subreddits"
+from constants import PATH
 
 def cluster_data(data, algorithm, args, kwds, name):
     """
@@ -45,15 +44,16 @@ def start_cluster(data, view, times):
         """
     if not os.path.exists("results"):
         os.makedirs("results")
-    for number in range(3, times):
+    for number in range(2,times+1):
         # too many dimensions to suse KMeans effectevly
-    #    cluster_data(
-    #        data[view],
-    #        cluster.MiniBatchKMeans,
-    #        (),
-    #        {'n_clusters':number},
-    #        view + "_miniBatchKmeans_"+str(number)
-    #    )
+        cluster_data(
+            data[view],
+            cluster.MiniBatchKMeans,
+            (),
+            {'n_clusters':number},
+            view + "_miniBatchKmeans_"+str(number)
+        )
+# worse than KMeans for many dimensions
 #        cluster_data(
 #            data[view],
 #            cluster.SpectralClustering,
@@ -65,7 +65,7 @@ def start_cluster(data, view, times):
             data[view],
             cluster.AgglomerativeClustering,
             (),
-            {'n_clusters':number, 'linkage':'average', 'affinity':'cosine'},
+            {'n_clusters':number, 'linkage':'average', 'affinity':'euclidean'},
             view + "_aggl_" + str(number)
         )
     cluster_data(
@@ -79,7 +79,7 @@ def start_cluster(data, view, times):
         data[view],
         hdbscan.HDBSCAN,
         (),
-        {'min_cluster_size':2},
+        {'min_cluster_size':2, 'min_samples':1, 'cluster_selection_method':'leaf'},
         view + "_HDBSCAN"
     )
 

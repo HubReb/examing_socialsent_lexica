@@ -13,13 +13,14 @@ for each reddit. There are four types of feature vectores created:
 For each view all feature vectors are clustered to detec similarities between the
 subreddits. For now, all clustering algorithms are applied.
 '''
-import csv
-import spacy
-import json
+
 import os
 import numpy as np
 
-PATH = "/home/students/hubert/socialsent/socialsent/socialsent/data/lexicons/subreddits"
+from subreddit_helpers import get_words, get_subreddits
+from constants import PATH
+
+#PATH = "/home/students/hubert/socialsent/socialsent/socialsent/data/lexicons/subreddits"
 
 class SubredditData:
     """
@@ -44,8 +45,8 @@ class SubredditData:
         """
 
         files = os.listdir(path)
-        words = self.get_words(files)
-        self.subreddits = self.get_subreddits(files)
+        words = get_words(files)
+        self.subreddits = get_subreddits(files)
         self.order = []
         self.sentiments = {
             "normal": [],
@@ -117,81 +118,10 @@ class SubredditData:
         if len(normal) != len(self.sentiments["all"]):
             raise AssertionError("Length of sentiment vectors is not correct!")
 
-    def get_subreddits(self, files):
-        """
-        Create or load subreddit dictionary
-
-        Arguments:
-            files: list of files that will be used to create subreddit dictionary
-
-        Returns:
-            dictionary of subreddits
-        """
-        if "subreddits.json" in files:
-            with open("subreddits.json") as f:
-                return json.load(f)
-        subreddits = {}
-        for subreddit in files:
-            if not subreddit.endswith("tsv"):
-                # file is not a subreddit
-                continue
-            try:
-                with open(subreddit) as f:
-                    subreddits[subreddit] = {}
-                    tsvreader = csv.reader(f, delimiter="\t")
-                    for line in tsvreader:
-                        sentiment = float(line[1])
-                        standard_variance = float(line[2])
-                        subreddits[subreddit][line[0]] = [sentiment, standard_variance]
-            except Exception as e:
-                print(e)
-        with open("subreddits.json", "w") as f:
-            json.dump(subreddits, f)
-        return subreddits
-
-    def get_words(self, files):
-        """
-        Create or load list of all words in the subreddits
-
-        Arguments;
-            files: list of files that will be used to create word list
-
-        Returns:
-            list of all words in the subreddits
-        """
-        if "words.txt" in files:
-            with open("words.txt") as f:
-                words = f.read().split("\n")
-        else:
-            print("Need to get all words in subreddits first. This will take a while.")
-            words = self.get_words_from_scratch(files)
-        return words
-
-    def get_words_from_scratch(self, files):
-        """ Create word list out of all given subreddits """
-        words = set({})
-        nlp = spacy.load("en")
-        for subreddit in files:
-            if not subreddit.endswith("tsv"):
-                continue
-            try:
-                with open(subreddit) as f:
-                    tsvreader = csv.reader(f, delimiter="\t")
-                    for line in tsvreader:
-                        lemmatized_word = nlp(line[0])
-                        words.add(str(lemmatized_word))
-            except Exception as e:
-                print(e)
-        words = list(words)
-        with open("words.txt", "w") as f:
-            f.write("\n".join(words))
-        return words
-
     def save_order(self):
         """ save order of reddits in featurevectors """
-        with open("order_subreddits.txt", "w") as f:
-            f.write("\n".join(self.order))
-
+        with open("order_subreddits.txt", "w") as order_in_file:
+            order_in_file.write("\n".join(self.order))
 
 if __name__ == '__main__':
     subreddits = SubredditData(PATH)
