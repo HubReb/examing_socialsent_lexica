@@ -7,9 +7,7 @@ import sys
 
 from clustered_subreddits import ClusteredSubreddits
 from evaluate_all import evaluate_clusters
-
-ACCEPTABLE_OPTIONS = ["normal", "minimum", "maximum", "all"]
-PATH = '/home/students/hubert/socialsent/socialsent/socialsent/data/lexicons/subreddits'
+from constants import ACCEPTABLE_OPTIONS, PATH
 
 def prettier_print(dictionary):
     ''' Print cluster dictionary in a pretty and readable format '''

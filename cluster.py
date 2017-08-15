@@ -50,22 +50,22 @@ def start_cluster(data, view, times):
             data[view],
             cluster.MiniBatchKMeans,
             (),
-            {'n_clusters':number},
+            {'n_clusters':number, 'batch_size':500},
             view + "_miniBatchKmeans_"+str(number)
         )
 # worse than KMeans for many dimensions
-#        cluster_data(
-#            data[view],
-#            cluster.SpectralClustering,
-#            (),
-#            {'n_clusters':number},
-#            view + "_spectral_"+str(number)
-#        )
+        cluster_data(
+            data[view],
+            cluster.SpectralClustering,
+            (),
+            {'n_clusters':number},
+            view + "_spectral_"+str(number)
+        )
         cluster_data(
             data[view],
             cluster.AgglomerativeClustering,
             (),
-            {'n_clusters':number, 'linkage':'average', 'affinity':'euclidean'},
+            {'n_clusters':number, 'linkage':'average', 'affinity':'canberra'},
             view + "_aggl_" + str(number)
         )
     cluster_data(
@@ -79,7 +79,7 @@ def start_cluster(data, view, times):
         data[view],
         hdbscan.HDBSCAN,
         (),
-        {'min_cluster_size':2, 'min_samples':1, 'cluster_selection_method':'leaf'},
+        {'min_cluster_size':2, 'min_samples':1, 'cluster_selection_method':'leaf', 'metric':'canberra'},
         view + "_HDBSCAN"
     )
 

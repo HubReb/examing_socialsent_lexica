@@ -87,7 +87,7 @@ if __name__ == '__main__':
         sys.exit()
     clusters = ClusteredSubreddits(PATH)
     print('KMeans\n', '__' * 30)
-    print(evaluate_mini_batch(clusters, sys.argv[1], 200))
+    #print(evaluate_mini_batch(clusters, sys.argv[1], 200))
     print('AGGL\n', '__' * 30)
     print(evaluate_agg(clusters, sys.argv[1], 200))
     print('MEANSHIFT\n', '__' *30)

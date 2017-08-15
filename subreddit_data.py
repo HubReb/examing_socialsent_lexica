@@ -16,6 +16,7 @@ subreddits. For now, all clustering algorithms are applied.
 
 import os
 import numpy as np
+import pandas as pd
 
 from subreddit_helpers import get_words, get_subreddits
 from constants import PATH
@@ -72,6 +73,14 @@ class SubredditData:
             self.sentiments["all"].append(sentiment_all)
         self.check_sentiments()
         self.transform_sentiments()
+        for view, sentiments in self.sentiments.items():
+            if view == 'all':
+                extended_words = []
+                for word in words:
+                    extended_words.extend([word + "min", word, word + "max"])
+                self.sentiments[view] = pd.DataFrame(sentiments, columns=extended_words)
+            else:
+                self.sentiments[view] = pd.DataFrame(sentiments, columns=words)
 
     def transform_sentiments(self):
         """ Transform list of list of word sentiments into a numpy array """
