@@ -53,14 +53,6 @@ def start_cluster(data, view, times):
             {'n_clusters':number, 'batch_size':500},
             view + "_miniBatchKmeans_"+str(number)
         )
-# worse than KMeans for many dimensions
-        cluster_data(
-            data[view],
-            cluster.SpectralClustering,
-            (),
-            {'n_clusters':number},
-            view + "_spectral_"+str(number)
-        )
         cluster_data(
             data[view],
             cluster.AgglomerativeClustering,

@@ -4,6 +4,7 @@
 ''' Evaluate results of clustering '''
 
 import sys
+from collections import defaultdict
 
 from clustered_subreddits import ClusteredSubreddits
 from evaluate_all import evaluate_clusters
@@ -11,22 +12,24 @@ from constants import ACCEPTABLE_OPTIONS, PATH
 
 def prettier_print(dictionary):
     ''' Print cluster dictionary in a pretty and readable format '''
-    for key, value in dictionary.items():
-        print('-'*48, '\nCluster %i: ' % key)
-        for cluster in value:
-            print(', '.join(cluster))
+    for n_c, clusters in dictionary.items():
+        print('-'*48, '\nCluster %s: ' % n_c)
+        print('\n'.join(clusters))
 
 def compare_results(clusters_one, clusters_two):
     ''' Compares two results of clustering and returns those with differences in them '''
     clusters_one = get_clusters(clusters_one)
     clusters_two = get_clusters(clusters_two)
-    different_cluster = {}
+    different_cluster = defaultdict(list)
     try:
-        for number_of_clusters, clusters in clusters_one.items():
-            if set(clusters) != set(clusters_two[number_of_clusters]):
-                different_cluster[number_of_clusters] = (clusters, clusters_two[number_of_clusters])
+        for key, cluster in clusters_one.items():
+            if cluster not in clusters_two.values():
+                different_cluster[key].append(('First alg %i: %s' % (key, ', '.join(cluster))))
+            else:
+                clusters_two = {key:val for key, val in clusters_two.items() if val != cluster}
+        different_cluster = merge_clusters(different_cluster, clusters_two)
     except IndexError:
-        print('Unenven number of clusters! Use evalualte_all.py for comparisions.')
+        print('Uneven number of clusters! Use evalualte_all.py for comparisions.')
         return {}
     return different_cluster
 
@@ -34,10 +37,15 @@ def get_clusters(clusters):
     ''' Returns result of a clustering algorithm'''
     number_of_clusters = int(clusters[3])
     if number_of_clusters <= 2:
-        return evaluate_clusters(clusters[0], clusters[1], clusters[2])
+        return evaluate_clusters(clusters[0], clusters[1], clusters[2])[0]
     else:
         calculated_clusters = evaluate_clusters(clusters[0], clusters[1], clusters[2], int(clusters[3]))
     return calculated_clusters[int(clusters[3])-2]
+
+def merge_clusters(dictionary, second_dict):
+    for key, value in second_dict.items():
+        dictionary[key].append('Second alg %i: %s' % (key, ', '.join(value)))
+    return dictionary
 
 if __name__ == '__main__':
     if len(sys.argv) < 7 or sys.argv[2] not in ACCEPTABLE_OPTIONS:
