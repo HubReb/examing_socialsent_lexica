@@ -76,3 +76,9 @@ def get_words(files):
         print("Need to get all words in subreddits first. This will take a while.")
         words = get_words_from_scratch(files)
     return words
+
+def get_subreddit_order():
+    ''' Return order of the feature vectors in matrix '''
+    with open('order_subreddits.txt') as f:
+        order = f.read().split('\n')
+    return order

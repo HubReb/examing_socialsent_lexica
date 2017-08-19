@@ -12,7 +12,7 @@ import os
 from collections import defaultdict
 import numpy as np
 
-from order_helpers import get_subreddit_order
+from helpers import get_subreddit_order
 
 class ClusteredSubreddits:
     '''
