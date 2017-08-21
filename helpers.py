@@ -108,7 +108,7 @@ def get_words(files):
         words = get_words_from_scratch(files)
     return words
 
-def get_subreddit_order():
+def get_lexica_order():
     ''' Return order of the feature vectors in matrix '''
     with open('order.txt') as f:
         order = f.read().split('\n')

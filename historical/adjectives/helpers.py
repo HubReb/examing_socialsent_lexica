@@ -67,7 +67,6 @@ def create_data(files):
             data[data_file] = {}
             tsvreader = csv.reader(f, delimiter="\t")
             for line in tsvreader:
-                print(line)
                 sentiment = float(line[1])
                 standard_variance = float(line[2])
                 data[data_file][line[0]] = [sentiment, standard_variance]
@@ -104,7 +103,7 @@ def get_words(files):
         with open("words.txt") as f:
             words = f.read().split("\n")
     else:
-        print("Need to get all words in subreddits first. This will take a while.")
+        print("Need to get all words first. This will take a while.")
         words = get_words_from_scratch(files)
     return words
 

@@ -12,7 +12,7 @@ import os
 from collections import defaultdict
 import numpy as np
 
-from helpers import get_lexica_order
+from helpers import get_subreddit_order
 from constants import PATH
 
 class ClusteredSubreddits:
@@ -47,7 +47,7 @@ class ClusteredSubreddits:
         path = path + '/results'
         clustered_data = os.listdir(path)
         self.get_clusters(clustered_data, path)
-        self.subreddit_list = get_lexica_order()
+        self.subreddit_list = get_subreddit_order()
 
     def set_clusters(self, algorithms):
         ''' Initialize dictionary of clusters to store results of algorithms '''
