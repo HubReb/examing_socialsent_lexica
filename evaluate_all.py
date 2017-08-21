@@ -89,7 +89,7 @@ if __name__ == '__main__':
     print('KMeans\n', '__' * 30)
     #print(evaluate_mini_batch(clusters, sys.argv[1], 200))
     print('AGGL\n', '__' * 30)
-    print(evaluate_agg(clusters, sys.argv[1], 200))
+    #print(evaluate_agg(clusters, sys.argv[1], 200))
     print('MEANSHIFT\n', '__' *30)
     print(evaluate_mean_shift(clusters, sys.argv[1]))
     print('HDBSCAN\n', '__' *30)

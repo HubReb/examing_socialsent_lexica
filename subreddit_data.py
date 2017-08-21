@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-
 '''
 Extract all sentiments in each reddit and create a corresponding feature vector
 for each reddit. There are four types of feature vectores created:
@@ -17,7 +16,7 @@ subreddits. For now, all clustering algorithms are applied.
 import os
 import pandas as pd
 
-from helpers import get_subreddits
+from helpers import get_subreddits, get_subreddit_order
 from constants import PATH
 from data import Data
 
@@ -42,8 +41,9 @@ class SubredditData(Data):
         Arguments:
             path:   Path to the folder containing the subreddits
         '''
+#        self.subreddit_list = get_subreddit_order()
         super().__init__(path)
-        self.subreddits = get_subreddits(self.files)
+        self.subreddits = get_subreddits(self.files) # ERROR IS HERE
         self.order = []
         self.sentiments = {
             'normal': [],
@@ -96,10 +96,7 @@ class SubredditData(Data):
                 - maximum sentiment of each word or 0
                 - original sentiment, minimum sentiment, maximum sentiment
         '''
-        sentiment_normal = []
-        sentiment_maximum = []
-        sentiment_minimum = []
-        sentiment_all = []
+        s_normal, s_maximum, s_minimum, s_all = [], [], [], []
         words_with_sentiment = self.subreddits[sent].keys()
         for word in words:
             if word not in words_with_sentiment:
@@ -108,11 +105,11 @@ class SubredditData(Data):
                 sentiment, variance = self.subreddits[sent][word]
                 sentiment_min = round(sentiment - variance, 2)
                 sentiment_max = round(sentiment + variance, 2)
-            sentiment_normal.append(sentiment)
-            sentiment_minimum.append(sentiment_min)
-            sentiment_maximum.append(sentiment_max)
-            sentiment_all.extend([sentiment_min, sentiment, sentiment_max])
-        return sentiment_normal, sentiment_minimum, sentiment_maximum, sentiment_all
+            s_normal.append(sentiment)
+            s_minimum.append(sentiment_min)
+            s_maximum.append(sentiment_max)
+            s_all.extend([sentiment_min, sentiment, sentiment_max])
+        return s_normal, s_maximum, s_minimum, s_all
 
     def check_sentiments(self):
         ''' simple check of dimensions of the feature matrices '''

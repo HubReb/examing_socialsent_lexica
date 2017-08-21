@@ -50,7 +50,7 @@ def start_cluster(data, view, times):
             data[view],
             cluster.MiniBatchKMeans,
             (),
-            {'n_clusters':number, 'batch_size':500},
+            {'n_clusters':number, 'batch_size':350},
             view + "_miniBatchKmeans_"+str(number)
         )
         cluster_data(

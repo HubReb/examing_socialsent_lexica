@@ -79,6 +79,6 @@ def get_words(files):
 
 def get_subreddit_order():
     ''' Return order of the feature vectors in matrix '''
-    with open('order_subreddits.txt') as f:
+    with open('order.txt') as f:
         order = f.read().split('\n')
     return order

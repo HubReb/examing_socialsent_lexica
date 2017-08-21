@@ -13,6 +13,7 @@ from collections import defaultdict
 import numpy as np
 
 from helpers import get_subreddit_order
+from constants import PATH
 
 class ClusteredSubreddits:
     '''
@@ -87,3 +88,6 @@ class ClusteredSubreddits:
         if number_of_clusters != 0:
             return np.histogram(array, bins=number_of_clusters)
         return np.histogram(array)
+
+if __name__ == '__main__':
+    clSub = ClusteredSubreddits(PATH)
