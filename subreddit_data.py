@@ -43,7 +43,7 @@ class SubredditData(Data):
         '''
 #        self.subreddit_list = get_subreddit_order()
         super().__init__(path)
-        self.subreddits = get_subreddits(self.files) # ERROR IS HERE
+        self.subreddits = get_subreddits(self.files)
         self.order = []
         self.sentiments = {
             'normal': [],
