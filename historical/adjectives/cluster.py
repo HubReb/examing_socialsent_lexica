@@ -51,7 +51,7 @@ def start_cluster(data, times):
             cluster.MiniBatchKMeans,
             (),
             {'n_clusters':number, 'batch_size':350},
-            "miniBatchKmeans_"+str(number)
+            "miniBatchKMeans_"+str(number)
         )
         cluster_data(
             data,
@@ -65,7 +65,7 @@ def start_cluster(data, times):
         cluster.MeanShift,
         (),
         {'min_bin_freq':2, 'cluster_all':True},
-        "_meanShift"
+        "meanShift"
     )
     cluster_data(
         data,
