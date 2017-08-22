@@ -4,3 +4,5 @@
 .*
 # ignore tsv
 *.tsv
+# ignore pycache
+__pycache__
