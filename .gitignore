@@ -1,0 +1,4 @@
+# ignore txt
+*.txt
+# ignore hidden files
+.*
