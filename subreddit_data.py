@@ -16,7 +16,7 @@ subreddits. For now, all clustering algorithms are applied.
 import os
 import pandas as pd
 
-from helpers import get_subreddits, get_subreddit_order
+from helpers import get_subreddits, get_lexica_order
 from constants import PATH
 from data import Data
 
