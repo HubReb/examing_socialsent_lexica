@@ -10,8 +10,9 @@ Access each cluster using algorithm:(number of clusters:) key
 import os
 from collections import defaultdict
 import numpy as np
-from constants import PATH_HISTORICAL_FREQUENCIES
-from helpers import get_lexica_order
+
+from examinlexica.constants import PATH_HISTORICAL_FREQUENCIES
+from examinlexica.helpers import get_lexica_order
 
 class ClusteredLexica:
     '''

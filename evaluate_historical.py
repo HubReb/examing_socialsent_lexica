@@ -14,9 +14,9 @@ For all other algorithms:
 Further evaluation methods will be implemented later.
 '''
 
-from clustered_historical import ClusteredLexica
-from constants import ACCEPTABLE_OPTIONS, HISTORICAL_OPTIONS
-import evaluate_all
+from examinlexica.clustered_historical import ClusteredLexica
+from examinlexica.constants import ACCEPTABLE_OPTIONS, HISTORICAL_OPTIONS
+import examinlexica.evaluate_all
 
 def evaluate_clusters(data, algorithm, times=0, view=None):
     ''' basic evaluation of algorithms with manually selected n. of clusters '''

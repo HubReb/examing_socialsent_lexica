@@ -19,9 +19,9 @@ import os
 import numpy as np
 import pandas as pd
 
-from constants import PATH_HISTORICAL_ADJECTIVES
-from helpers import get_historical_adj
-from data import Data
+from examinlexica.constants import PATH_HISTORICAL_ADJECTIVES
+from examinlexica.helpers import get_historical_adj
+from examinlexica.data import Data
 
 class HistoricalData(Data):
     '''

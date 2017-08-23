@@ -15,8 +15,8 @@ Further evaluation methods will be implemented later.
 '''
 from collections import defaultdict
 
-from clustered_subreddits import ClusteredSubreddits
-from constants import ACCEPTABLE_OPTIONS, PATH
+from examinlexica.clustered_subreddits import ClusteredSubreddits
+from examinlexica.constants import ACCEPTABLE_OPTIONS, PATH
 
 def evaluate_clusters(data, algorithm, times=0, view=None):
     ''' basic evaluation of algorithms with manually selected n. of clusters '''

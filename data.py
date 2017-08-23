@@ -9,7 +9,7 @@ HistoricalData
 import os
 import numpy as np
 
-from helpers import get_words
+from examinlexica.helpers import get_words
 
 class Data:
     '''

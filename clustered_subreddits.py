@@ -12,8 +12,8 @@ import os
 from collections import defaultdict
 import numpy as np
 
-from helpers import get_lexica_order
-from constants import PATH
+from examinlexica.helpers import get_lexica_order
+from examinlexica.constants import PATH
 
 class ClusteredSubreddits:
     '''

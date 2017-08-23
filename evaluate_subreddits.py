@@ -3,12 +3,12 @@
 
 import sys
 
-from evaluate_all import evaluate_clusters_readable_output
-from constants import (
+from examinlexica.evaluate_all import evaluate_clusters_readable_output
+from examinlexica.constants import (
                         PATH,
                         ACCEPTABLE_OPTIONS
                         )
-from clustered_subreddits import ClusteredSubreddits
+from examinlexica.clustered_subreddits import ClusteredSubreddits
 
 
 def evaluate_mini_batch(data, times, view):
