@@ -19,7 +19,8 @@ class Data:
     def __init__(self, path):
         ''' Initialize an object containing all sentiment data '''
         self.files = os.listdir(path)
-        self.words = get_words(self.files)
+        self.words = get_words(path, self.files)
+        self.path = path
         self.sentiments = {}
 
     def transform_sentiments(self):
@@ -29,5 +30,5 @@ class Data:
 
     def save_order(self):
         ''' save order of reddits/decades in featurematrix '''
-        with open('order.txt', 'w') as order_in_file:
+        with open(self.path + '/' + 'order.txt', 'w') as order_in_file:
             order_in_file.write('\n'.join(self.order))

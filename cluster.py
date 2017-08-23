@@ -10,16 +10,22 @@
 '''
 
 import os
+import sys
 import hdbscan
 import sklearn.cluster as cluster
 import numpy as np
 
 from subreddit_data import SubredditData
-from constants import PATH
+from historical_data import HistoricalData
+from constants import (
+                        PATH,
+                        HISTORICAL_OPTIONS
+                        )
 
-def cluster_data(data, algorithm, args, kwds, name):
+
+def cluster_data(data, algorithm, args, kwds, name, result_folder):
     """
-    Cluster the subreddits and save results in a npy-file
+    Cluster the hist_adj and save results in a npy-file
 
     Arguments:
         algorithm: the algorithm used for clustering (method call!)
@@ -28,10 +34,14 @@ def cluster_data(data, algorithm, args, kwds, name):
         name: name of the file that will be used to save the result
         view: sentiment view (normal, maximum, normal, all)
     """
+    results = result_folder + "results"
+    if not os.path.exists(results):
+        os.makedirs(results)
     labels = algorithm(*args, **kwds).fit_predict(data)
-    np.save("results/"+name+"_labels.npy", labels)
+    np.save(results + "/" + name + "_labels.npy", labels)
 
-def start_cluster(data, view, times):
+
+def start_cluster(data, result_path, times=0, view=None):
     """
     Function to start clustering, resutls are saved in a seperate file
 
@@ -42,8 +52,10 @@ def start_cluster(data, view, times):
             maximum number of clusters to be used for KMeans, spectral and
             agglomerative clustering
         """
-    if not os.path.exists("results"):
-        os.makedirs("results")
+    if view:
+        data = data[view]
+    else:
+        view = ''
     for number in range(2,times+1):
         # too many dimensions to suse KMeans effectevly
     #    cluster_data(
@@ -54,30 +66,41 @@ def start_cluster(data, view, times):
     #        view + "_miniBatchKmeans_"+str(number)
     #    )
         cluster_data(
-            data[view],
+            data,
             cluster.AgglomerativeClustering,
             (),
             {'n_clusters':number, 'linkage':'average', 'affinity':'canberra'},
-            view + "_aggl_" + str(number)
+            view + "_aggl_" + str(number),
+            result_path
         )
     cluster_data(
-        data[view],
+        data,
         cluster.MeanShift,
         (),
         {'min_bin_freq':2, 'cluster_all':True},
-        view + "_meanShift"
+        view + "_meanShift",
+        result_path
     )
     cluster_data(
-        data[view],
+        data,
         hdbscan.HDBSCAN,
         (),
         {'min_cluster_size':2, 'min_samples':1, 'cluster_selection_method':'leaf', 'metric':'canberra'},
-        view + "_HDBSCAN"
+        view + "_HDBSCAN",
+        result_path
     )
 
 if __name__ == '__main__':
-    subreddits = SubredditData(PATH)
-    start_cluster(subreddits.sentiments, "normal", 200)
-    start_cluster(subreddits.sentiments, "minimum", 200)
-    start_cluster(subreddits.sentiments, "maximum", 200)
-    start_cluster(subreddits.sentiments, "all", 200)
+    if len(sys.argv) < 2:
+        subreddits = SubredditData(PATH)
+        start_cluster(subreddits.sentiments, "results", 200, "normal")
+        start_cluster(subreddits.sentiments, "results", 200, "minimum")
+        start_cluster(subreddits.sentiments, "results", 200, "maximum")
+        start_cluster(subreddits.sentiments, "results", 200, "all")
+    else:
+        if sys.argv[1] not in HISTORICAL_OPTIONS.keys():
+            print('usage: python3 cluster.py adjectives|frequencies')
+            sys.exit()
+        path = HISTORICAL_OPTIONS[sys.argv[1]]
+        hist_adj = HistoricalData(path)
+        start_cluster(hist_adj.sentiments, 8, path)

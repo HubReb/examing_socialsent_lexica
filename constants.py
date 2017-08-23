@@ -4,5 +4,10 @@
 ''' Constants used in various scipts '''
 
 PATH = "/home/students/hubert/socialsent/socialsent/socialsent/data/lexicons/subreddits/"
-PATH_HISTORICAL_ADJECTIVES = "/home/students/hubert/socialsent/socialsent/socialsent/data/lexicons/subreddits/historical/adjectives"
+PATH_HISTORICAL_ADJECTIVES = "/home/students/hubert/socialsent/socialsent/socialsent/data/lexicons/subreddits/historical/adjectives/"
+PATH_HISTORICAL_FREQUENCIES = "/home/students/hubert/socialsent/socialsent/socialsent/data/lexicons/subreddits/historical/hists/"
 ACCEPTABLE_OPTIONS = ["normal", "minimum", "maximum", "all"]
+HISTORICAL_OPTIONS = {
+        'adjectives' : PATH_HISTORICAL_ADJECTIVES,
+        'frequencies' : PATH_HISTORICAL_FREQUENCIES
+}

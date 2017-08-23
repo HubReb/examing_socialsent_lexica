@@ -7,7 +7,7 @@ import json
 import csv
 import spacy
 
-def get_subreddits(files):
+def get_subreddits(path, files):
     """
     Create or load subreddit dictionary
 
@@ -17,15 +17,16 @@ def get_subreddits(files):
     Returns:
         dictionary of subreddits
     """
+    subreddits_file = path + "subreddits.json"
     if "subreddits.json" in files:
-        with open("subreddits.json") as subreddits_file:
+        with open(subreddits_file) as subreddits_file:
             return json.load(subreddits_file)
     sub_reddits = create_data(files)
-    with open("subreddits.json", "w") as subreddits_in_file:
+    with open(subreddits_file, "w") as subreddits_in_file:
         json.dump(sub_reddits, subreddits_in_file)
     return sub_reddits
 
-def get_historical_adj(files):
+def get_historical_adj(path, files):
     ''' Create or load historical dictionary
 
     Arguments:
@@ -33,15 +34,16 @@ def get_historical_adj(files):
     Returns:
         dictionary of historical lexica
     '''
-    if "adjectives.json" in files:
-        with open("adjectives.json") as f:
+    adjectives_file = path + "adjectives.json"
+    if adjectives_file in files:
+        with open(adjectives_file) as f:
             return json.load(f)
-    adjectives = create_data(files)
-    with open("adjectives.json", "w") as f:
+    adjectives = create_data(path, files)
+    with open(path + "adjectives.json", "w") as f:
         json.dump(adjectives, f)
     return adjectives
 
-def get_historical_freq(files):
+def get_historical_freq(path, files):
     ''' Create or load historical dictionary
 
     Arguments:
@@ -53,30 +55,30 @@ def get_historical_freq(files):
         with open("frequencies.json") as f:
             return json.load(f)
     frequencies = create_data(files)
-    with open("frequencies.json", "w") as f:
+    with open(path + "frequencies.json", "w") as f:
         json.dump(frequencies, f)
     return frequencies
 
-def create_data(files):
+def create_data(path, files):
     data = {}
     for data_file in files:
         if not data_file.endswith("tsv"):
             # file is not a subreddit
             continue
-        with open(data_file) as f:
+        with open(path + data_file) as f:
             data[data_file] = {}
             tsvreader = csv.reader(f, delimiter="\t")
             for line in tsvreader:
-                print(line)
                 sentiment = float(line[1])
                 standard_variance = float(line[2])
                 data[data_file][line[0]] = [sentiment, standard_variance]
     return data
 
-def get_words_from_scratch(files):
+def get_words_from_scratch(path, files):
     """ Create word list out of all given subreddits """
     words = set({})
     nlp = spacy.load("en")
+    files = [path +  f for f in files]
     for data_file in files:
         if not data_file.endswith("tsv"):
             continue
@@ -86,11 +88,11 @@ def get_words_from_scratch(files):
                 lemmatized_word = nlp(line[0])
                 words.add(str(lemmatized_word))
     words = list(words)
-    with open("words.txt", "w") as f:
+    with open(path + "words.txt", "w") as f:
         f.write("\n".join(words))
     return words
 
-def get_words(files):
+def get_words(path, files):
     """
     Create or load list of all words in the data filess
 
@@ -100,16 +102,17 @@ def get_words(files):
     Returns:
         list of all words in the data filess
     """
+    words_file = path + "words.txt"
     if "words.txt" in files:
-        with open("words.txt") as f:
+        with open(words_file) as f:
             words = f.read().split("\n")
     else:
-        print("Need to get all words in subreddits first. This will take a while.")
-        words = get_words_from_scratch(files)
+        print("Need to get all words first. This will take a while.")
+        words = get_words_from_scratch(path, files)
     return words
 
-def get_lexica_order():
+def get_lexica_order(path):
     ''' Return order of the feature vectors in matrix '''
-    with open('order.txt') as f:
+    with open(path + 'order.txt') as f:
         order = f.read().split('\n')
     return order
