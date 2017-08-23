@@ -27,7 +27,7 @@ class ClusteredLexica:
             list of lexica feature vectors to access order of the labels.
             (number of lexica in list == number of label in vecto.
     '''
-    def __init__(self, path):
+    def __init__(self, path, path_clusters):
         '''
         Initialize object containing all labels of the clustering algorithms.
 
@@ -39,9 +39,8 @@ class ClusteredLexica:
         algorithms = ['meanShift', 'HDBSCAN', 'aggl', 'spectral', 'miniBatchKMeans']
         self.set_clusters(algorithms)
         self.lexica_list = get_lexica_order(path)
-        path = path + 'results'
-        clustered_data = os.listdir(path)
-        self.get_clusters(clustered_data, path)
+        clustered_data = os.listdir(path_clusters)
+        self.get_clusters(clustered_data, path_clusters)
 
     def set_clusters(self, algorithms):
         ''' Initialize dictionary of clusters to store results of algorithms '''
@@ -82,5 +81,5 @@ class ClusteredLexica:
         return np.histogram(array)
 
 if __name__ == '__main__':
-    clSub = ClusteredSubreddits(PATH_HISTORICAL_FREQUENCIES)
+    clSub = ClusteredSubreddits(PATH_HISTORICAL_FREQUENCIES, PATH_HISTORICAL_FREQUENCIES + '/results')
     print(clSub.view_cluster('meanShift', 0))

@@ -2,6 +2,7 @@
 # -+- coding: utf-8 -*-
 
 import sys
+import argparse
 
 from examinlexica.evaluate_all import evaluate_clusters_readable_output
 from examinlexica.constants import (
@@ -23,6 +24,8 @@ def evaluate_mini_batch(data, times, view):
 
 def evaluate_agg(data, times, view):
     ''' evaluate clusters computed with agglomerative clustering '''
+    if times == 0:
+        print('Clustering without clusters?!')
     return evaluate_clusters_readable_output(data, 'aggl', times, view=view)
 
 def evaluate_spectral(data, times, view):
@@ -38,15 +41,30 @@ def evaluate_hdbscan(data, view):
     return evaluate_clusters_readable_output(data, 'HDBSCAN', view=view)
 
 if __name__ == '__main__':
-    if len(sys.argv) < 2 or sys.argv[1] not in ACCEPTABLE_OPTIONS:
-        print("usage: python3 evaluate_methods.py normal|maximum|all|minimum")
-        sys.exit()
-    clusters = ClusteredSubreddits(PATH)
-    print('KMeans\n', '__' * 30)
-    #print(evaluate_mini_batch(clusters, sys.argv[1], 200))
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        '-r',
+        '--results',
+        default='.',
+        help='folder for the results of clustering'
+    )
+    parser.add_argument(
+        '-c',
+        '--clusters',
+        default=0,
+        help='number of clusters used for aggl. clustering',
+        type=int
+    )
+    parser.add_argument(
+        'matrix',
+        help='create feature matrix using normal, minimal, maximal or all three values',
+        choices=ACCEPTABLE_OPTIONS,
+    )
+    args = vars(parser.parse_args())
+    clusters = ClusteredSubreddits(PATH, args['results'])
     print('AGGL\n', '__' * 30)
-    print(evaluate_agg(clusters, 200, sys.argv[1]))
+    print(evaluate_agg(clusters, args['clusters'], args['matrix']))
     print('MEANSHIFT\n', '__' *30)
-    print(evaluate_mean_shift(clusters, sys.argv[1]))
+    print(evaluate_mean_shift(clusters, args['matrix']))
     print('HDBSCAN\n', '__' *30)
-    print(evaluate_hdbscan(clusters, sys.argv[1]))
+    print(evaluate_hdbscan(clusters, args['matrix']))

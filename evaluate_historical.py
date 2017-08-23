@@ -14,9 +14,10 @@ For all other algorithms:
 Further evaluation methods will be implemented later.
 '''
 
+import argparse
 from examinlexica.clustered_historical import ClusteredLexica
 from examinlexica.constants import ACCEPTABLE_OPTIONS, HISTORICAL_OPTIONS
-import examinlexica.evaluate_all
+import examinlexica.evaluate_all as evaluate_all
 
 def evaluate_clusters(data, algorithm, times=0, view=None):
     ''' basic evaluation of algorithms with manually selected n. of clusters '''
@@ -36,6 +37,9 @@ def evaluate_mini_batch(data, times):
 
 def evaluate_agg(data, times):
     ''' evaluate clusters computed with agglomerative clustering '''
+    if times == 0:
+        print('Clustering without clusters?!')
+        return
     return evaluate_all.evaluate_clusters_readable_output(data, 'aggl', times)
 
 def evaluate_spectral(data, times):
@@ -51,16 +55,33 @@ def evaluate_hdbscan(data):
     return evaluate_all.evaluate_clusters_readable_output(data, 'HDBSCAN')
 
 if __name__ == '__main__':
-    import sys
-    if len(sys.argv) < 2 or sys.argv[1] not in HISTORICAL_OPTIONS.keys():
-        print('usage: python3 cluster.py adjectives|frequencies')
-        sys.exit()
-    path = HISTORICAL_OPTIONS[sys.argv[1]]
-    clusters = ClusteredLexica(path)
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        '-r',
+        '--results',
+        default='.',
+        help='folder for the results of clustering'
+    )
+    parser.add_argument(
+        '-c',
+        '--clusters',
+        default=0,
+        help='number of clusters used for aggl. clustering',
+        type=int
+    )
+    parser.add_argument(
+        'data',
+        help='clustered data',
+        choices=HISTORICAL_OPTIONS.keys()
+    )
+    args = vars(parser.parse_args())
+    path = HISTORICAL_OPTIONS[args['data']]
+    clusters = ClusteredLexica(path, args['results'])
     print('KMeans\n', '__' * 30)
-    #print(evaluate_mini_batch(clusters, sys.argv[1], 200))
+    clusters_number = args['clusters']
+    #print(evaluate_mini_batch(clusters, clusters_number))
     print('AGGL\n', '__' * 30)
-    print(evaluate_agg(clusters, 6))
+    print(evaluate_agg(clusters, clusters_number))
     print('MEANSHIFT\n', '__' *30)
     print(evaluate_mean_shift(clusters))
     print('HDBSCAN\n', '__' *30)
