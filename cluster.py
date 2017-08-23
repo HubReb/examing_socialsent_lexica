@@ -82,7 +82,8 @@ def start_cluster(data, result_path, number_of_clusters=0, matrix=None):
             cluster.MiniBatchKMeans,
             (),
             {'n_clusters':nc, 'batch_size':350},
-            name + "_miniBatchKmeans_"+str(nc)
+            name + "_miniBatchKmeans_"+str(nc),
+            result_path
         )
         cluster_data(
             data,
