@@ -78,17 +78,17 @@ def start_cluster(data, result_path, number_of_clusters=0, matrix=None):
         name = ''
     for nc in range(2, number_of_clusters+1):
         cluster_data(
-            data[view],
+            data,
             cluster.MiniBatchKMeans,
             (),
-            {'n_clusters':number, 'batch_size':350},
-            view + "_miniBatchKmeans_"+str(number)
+            {'n_clusters':nc, 'batch_size':350},
+            name + "_miniBatchKmeans_"+str(nc)
         )
         cluster_data(
             data,
             cluster.AgglomerativeClustering,
             (),
-            {'n_clusters':number_of_clusters, 'linkage':'average', 'affinity':'canberra'},
+            {'n_clusters':nc, 'linkage':'average', 'affinity':'canberra'},
             name + 'aggl_' + str(nc),
             result_path
         )
