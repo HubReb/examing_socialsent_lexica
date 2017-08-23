@@ -93,10 +93,10 @@ def start_cluster(data, result_path, times=0, view=None):
 if __name__ == '__main__':
     if len(sys.argv) < 2:
         subreddits = SubredditData(PATH)
-        start_cluster(subreddits.sentiments, "results", 200, "normal")
-        start_cluster(subreddits.sentiments, "results", 200, "minimum")
-        start_cluster(subreddits.sentiments, "results", 200, "maximum")
-        start_cluster(subreddits.sentiments, "results", 200, "all")
+        start_cluster(subreddits.sentiments, "", 200, "normal")
+        start_cluster(subreddits.sentiments, "", 200, "minimum")
+        start_cluster(subreddits.sentiments, "", 200, "maximum")
+        start_cluster(subreddits.sentiments, "", 200, "all")
     else:
         if sys.argv[1] not in HISTORICAL_OPTIONS.keys():
             print('usage: python3 cluster.py adjectives|frequencies')
