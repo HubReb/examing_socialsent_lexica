@@ -16,7 +16,7 @@ Further evaluation methods will be implemented later.
 
 import argparse
 from examinlexica.clustered_historical import ClusteredLexica
-from examinlexica.constants import ACCEPTABLE_OPTIONS, HISTORICAL_OPTIONS
+from examinlexica.constants import HISTORICAL_OPTIONS
 import examinlexica.evaluate_all as evaluate_all
 
 def evaluate_clusters(data, algorithm, times=0, view=None):

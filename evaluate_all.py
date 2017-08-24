@@ -3,20 +3,13 @@
 
 
 '''
-Create an ClusteredSubreddits object and run basic evaluation on the clusters:
-For each clustering algorithm with manually selected number of clusters:
-    - compare two following iterations
-    - look into histograms of clusters
-    - note if there is no longer any change
-For all other algorithms:
-    - look into histograms of clusters
-
-Further evaluation methods will be implemented later.
+Functions used to evaluate both CLusteredSubreddits and ClusteredLexica objects.
+Create an Clustered* object and run basic evaluation on the clusters:
+Return an easily readable output.
 '''
-from collections import defaultdict
 
 from examinlexica.clustered_subreddits import ClusteredSubreddits
-from examinlexica.constants import ACCEPTABLE_OPTIONS, PATH
+from examinlexica.constants import PATH
 
 def evaluate_clusters(data, algorithm, times=0, view=None):
     ''' basic evaluation of algorithms with manually selected n. of clusters '''
@@ -49,5 +42,4 @@ def pretty_print(result):
     return result_total
 
 if __name__ == '__main__':
-    import sys
-    clusters = ClusteredSubreddits(PATH)
+    clusters = ClusteredSubreddits(PATH, "subreddits_results")

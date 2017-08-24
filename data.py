@@ -21,6 +21,7 @@ class Data:
         self.files = os.listdir(path)
         self.words = get_words(path, self.files)
         self.path = path
+        self.order = []
         self.sentiments = {}
 
     def transform_sentiments(self):

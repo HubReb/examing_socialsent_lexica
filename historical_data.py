@@ -15,7 +15,6 @@ Applied clustering algorithms:
     HDBSCAN Clustering
 '''
 
-import os
 import numpy as np
 import pandas as pd
 
@@ -42,7 +41,6 @@ class HistoricalData(Data):
             path: Path to the folder containing the lexica
         '''
         super().__init__(path)
-        self.order = []
         self.lexica = get_historical_adj(path, self.files)
         self.sentiments = []
         self.set_sentiments()
@@ -60,14 +58,12 @@ class HistoricalData(Data):
         self.transform_sentiments()
         self.sentiments = pd.DataFrame(self.sentiments, columns=self.words)
 
-    def save_orders(self):
-        pass
-
     def transform_sentiments(self):
         ''' Transform list of lists of sentiments into a numpy array '''
         self.sentiments = np.array(self.sentiments)
 
     def get_sentiment(self, lexicon):
+        ''' return sentiments of words in lexicon '''
         words_with_sentiment = self.lexica[lexicon].keys()
         sentiment_in_lexicon = []
         for word in self.words:

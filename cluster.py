@@ -17,9 +17,10 @@ For the historical data:
     There are currently two historical data sets in use: frequencies and adjectives.
     For more information on the data sets see their specific READMEs (taken from
     socialsent).
-    The data set must be chosen before clustering.
 
-All results are stored in a specified folder.
+The data set must be chosen before clustering.
+
+All results are stored in a specified folder (results option).
 '''
 
 import os
@@ -32,10 +33,10 @@ import numpy as np
 from examinlexica.subreddit_data import SubredditData
 from examinlexica.historical_data import HistoricalData
 from examinlexica.constants import (
-                        PATH,
-                        HISTORICAL_OPTIONS,
-                        ACCEPTABLE_OPTIONS
-                        )
+    PATH,
+    HISTORICAL_OPTIONS,
+    ACCEPTABLE_OPTIONS
+    )
 
 def cluster_data(data, algorithm, args, kwds, name, result_folder):
     '''
@@ -81,8 +82,8 @@ def start_cluster(data, result_path, number_of_clusters=0, matrix=None):
             data,
             cluster.MiniBatchKMeans,
             (),
-            {'n_clusters':nc, 'batch_size':350},
-            name + "_miniBatchKmeans_"+str(nc),
+            {'n_clusters':nc, 'batch_size':250},
+            name + "miniBatchKmeans_"+str(nc),
             result_path
         )
         cluster_data(
@@ -116,7 +117,7 @@ def start_cluster(data, result_path, number_of_clusters=0, matrix=None):
     )
 
 
-def clarguments_checks(data, matrix, clusters, results):
+def clarguments_checks(data, matrix, clusters):
     ''' basic plausability checks of command line arguments '''
     if data in HISTORICAL_OPTIONS.keys():
         if matrix:
@@ -126,7 +127,7 @@ def clarguments_checks(data, matrix, clusters, results):
         if clusters < 0:
             print('number of clusters cannot be smaller than 0!')
             return False
-        elif matrix == None:
+        elif not matrix:
             print('specify a feature matrix!')
             return False
     return True
@@ -141,7 +142,7 @@ if __name__ == '__main__':
     parser.add_argument(
         '-r',
         '--results',
-        default='.',
+        default='./',
         help='folder for the results of clustering'
     )
     parser.add_argument(
@@ -159,7 +160,7 @@ if __name__ == '__main__':
         default=None
     )
     args = vars(parser.parse_args())
-    if not clarguments_checks(args['data'], args['matrix'], args['clusters'], args['results']):
+    if not clarguments_checks(args['data'], args['matrix'], args['clusters']):
         sys.exit()
     if args['data'] in HISTORICAL_OPTIONS.keys():
         path = HISTORICAL_OPTIONS[args['data']]

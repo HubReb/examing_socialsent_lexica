@@ -2,8 +2,11 @@
 # -*- coding: utf-8 -*-
 
 '''
-Extract all labels creted by the clustering algorithms and store them in a
-single object.
+Extract all labels created by clustering and store them in a single dictionary in
+form:
+    algorithm : labels (feature vector)
+The lexica names are stored in a list, whose order corresponds to the order of
+the features in the feature vectors (labels).
 Access each cluster using algorithm:(number of clusters:) key
 '''
 
@@ -16,16 +19,19 @@ from examinlexica.helpers import get_lexica_order
 
 class ClusteredLexica:
     '''
-    An object containing all results of the clustering algorithms in every view.
+    An object containing all results of the clustering algorithms in every view /
+    feature matrix.
 
     Attributes:
         clusters:
-            dictionary containing all labels. Access labels using view as key.
-            If the number of clusters had to be specified manually use number of
-            clusters as second key.
+            dictionary of form: algorithm:labels
+            For the algorithms which need the the number of clusters to be
+            specified beforehand, the dictionary has the form:
+            algorithm:[number_of_clusters:labels]
         lexica_list:
-            list of lexica feature vectors to access order of the labels.
-            (number of lexica in list == number of label in vecto.
+            list of lexica feature vectors to access order of the lexica in the
+            labels.
+            (number of lexicon in list == number of label in vector.
     '''
     def __init__(self, path, path_clusters):
         '''
@@ -33,7 +39,9 @@ class ClusteredLexica:
 
         Arguments:
             path:
-                path to the folder containing results of the clustering algorithms
+                path to the folder containing the original data of the lexica
+            path_clusters:
+                path to the folder containin the clustered lexica
         '''
         self.clusters = {}
         algorithms = ['meanShift', 'HDBSCAN', 'aggl', 'spectral', 'miniBatchKMeans']
@@ -43,12 +51,16 @@ class ClusteredLexica:
         self.get_clusters(clustered_data, path_clusters)
 
     def set_clusters(self, algorithms):
-        ''' Initialize dictionary of clusters to store results of algorithms '''
+        ''' Initialize dictionary of clusters to store results of algorithms in '''
         for algorithm in algorithms:
             self.clusters[algorithm] = {}
 
     def get_clusters(self, data, path):
-        ''' Access results of clustering algorithms and store them clusters '''
+        ''' Access results of clustering algorithms and store them in clusters
+            Arguments:
+                data: names of the files containing the clustered lexica
+                path: path to the folder containing the clustered lexica
+        '''
         path = path + '/'
         for cluster_file in data:
             path_file = path + cluster_file
@@ -81,5 +93,5 @@ class ClusteredLexica:
         return np.histogram(array)
 
 if __name__ == '__main__':
-    clSub = ClusteredSubreddits(PATH_HISTORICAL_FREQUENCIES, PATH_HISTORICAL_FREQUENCIES + '/results')
-    print(clSub.view_cluster('meanShift', 0))
+    histSub = ClusteredLexica(PATH_HISTORICAL_FREQUENCIES, PATH_HISTORICAL_FREQUENCIES + 'results')
+    print(histSub.view_cluster('meanShift'))

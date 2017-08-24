@@ -60,6 +60,7 @@ def get_historical_freq(path, files):
     return frequencies
 
 def create_data(path, files):
+    ''' Create a dictionary containing all files and and the sentiment of each word '''
     data = {}
     for data_file in files:
         if not data_file.endswith("tsv"):

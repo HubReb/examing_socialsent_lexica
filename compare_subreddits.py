@@ -62,11 +62,11 @@ def pretty_print(sentiments):
         if len(sentiment) == 1:
             sentiment.append(['Nan', 'Nan'])
         result += '\n%s:\t\t%s, %s\t\t%s, %s' % (
-        word,
-        sentiment[0][0],
-        sentiment[0][1],
-        sentiment[1][0],
-        sentiment[1][1]
+            word,
+            sentiment[0][0],
+            sentiment[0][1],
+            sentiment[1][0],
+            sentiment[1][1]
         )
     return result
 
@@ -74,4 +74,4 @@ if __name__ == '__main__':
     if len(sys.argv) < 4:
         print('usage: python3 compare_subreddits.py subreddit_one subreddit_two filename')
         sys.exit()
-    save_results(pretty_print(compare_reddits(sys.argv[1],sys.argv[2])), sys.argv[3])
+    save_results(pretty_print(compare_reddits(sys.argv[1], sys.argv[2])), sys.argv[3])

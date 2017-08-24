@@ -6,9 +6,9 @@
 import sys
 from collections import defaultdict
 
-from clustered_subreddits import ClusteredSubreddits
-from evaluate_all import evaluate_clusters
-from constants import ACCEPTABLE_OPTIONS, PATH
+from examinlexica.clustered_subreddits import ClusteredSubreddits
+from examinlexica.evaluate_all import evaluate_clusters
+from examinlexica.constants import ACCEPTABLE_OPTIONS, PATH
 
 def prettier_print(results):
     ''' Print cluster dictionary in a pretty and readable format '''
@@ -61,14 +61,15 @@ def get_clusters(clusters):
         return evaluate_clusters(clusters[0], clusters[1], clusters[2])[0]
     else:
         calculated_clusters = evaluate_clusters(
-        clusters[0],
-        clusters[1],
-        clusters[2],
-        int(clusters[3])
+            clusters[0],
+            clusters[1],
+            clusters[2],
+            int(clusters[3])
         )
     return calculated_clusters[int(clusters[3])-2]
 
 def merge_clusters(dictionary, second_dict):
+    ''' Merge two dictionaries into one '''
     for key, value in second_dict.items():
         dictionary[key].append('Second alg %i: %s' % (key, ', '.join(value)))
     return dictionary
@@ -81,7 +82,7 @@ if __name__ == '__main__':
             "aggl|meanShift|HDBSCAN normal|maximum|all|minimum n_cl"
         )
         sys.exit()
-    clustered_data = ClusteredSubreddits(PATH)
+    clustered_data = ClusteredSubreddits(PATH, "subreddits_results")
     print(
         prettier_print(
             compare_results(

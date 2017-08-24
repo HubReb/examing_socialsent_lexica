@@ -4,8 +4,7 @@
 '''
 Extract all labels created by the clustering algorithms and store them in a single
 ClusteredSubreddits object.
-Each cluster can be accesed via view(:number of cluster) key.
-For now, no specific comparision method is implemented
+Each cluster can be accessed via view(:number of cluster) key.
 '''
 
 import os
@@ -21,7 +20,8 @@ class ClusteredSubreddits:
 
     Attributes:
         clusters:
-            dictionary containing all labels. Access labels using view as key.
+            dictionary containing all labels. Access labels using view (feature
+            matrix)as key.
             If the number of clusters had to be specified manually use number of
             clusters as second key.
         subreddit_list:
@@ -45,7 +45,6 @@ class ClusteredSubreddits:
         algorithms = ['meanShift', 'HDBSCAN', 'aggl', 'spectral', 'miniBatchKmeans']
         self.set_clusters(algorithms)
         self.subreddit_list = get_lexica_order(path)
-        path = path + 'results'
         clustered_data = os.listdir(path_clusters)
         self.get_clusters(clustered_data, path_clusters)
 
@@ -57,7 +56,7 @@ class ClusteredSubreddits:
 
 
     def get_clusters(self, data, path):
-        ''' Access results of clustering algorithms and store them clusters '''
+        ''' Access results of clustering algorithms and store them in clusters '''
         path = path + '/'
         for cluster_file in data:
             path_file = path + cluster_file
@@ -90,4 +89,4 @@ class ClusteredSubreddits:
         return np.histogram(array)
 
 if __name__ == '__main__':
-    clSub = ClusteredSubreddits(PATH, PATH + '/results')
+    clSub = ClusteredSubreddits(PATH, 'subreddits_results')

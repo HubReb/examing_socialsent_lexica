@@ -1,31 +1,39 @@
 #! /usr/bin/env python3
 # -+- coding: utf-8 -*-
 
-import sys
+'''
+Create an CLusteredSubreddits object and evaluate it.
+Return an easily readable string for every used clustering algorithm.
+If no clusters are specified, clustering algorithms, which need to have
+a predifined number of clusters to work, are skipped.
+'''
+
 import argparse
 
 from examinlexica.evaluate_all import evaluate_clusters_readable_output
 from examinlexica.constants import (
-                        PATH,
-                        ACCEPTABLE_OPTIONS
-                        )
+    PATH,
+    ACCEPTABLE_OPTIONS
+    )
 from examinlexica.clustered_subreddits import ClusteredSubreddits
 
 
 def evaluate_mini_batch(data, times, view):
     ''' evaluate clusters computed with mini batch kmeans '''
     clusters = evaluate_clusters_readable_output(
-                                                    data,
-                                                    'miniBatchKmeans',
-                                                    times,
-                                                    view=view
-                                                )
+        data,
+        'miniBatchKmeans',
+        times,
+        view=view
+    )
     return clusters
 
 def evaluate_agg(data, times, view):
     ''' evaluate clusters computed with agglomerative clustering '''
+    print(data, times, view)
     if times == 0:
         print('Clustering without clusters?!')
+        return
     return evaluate_clusters_readable_output(data, 'aggl', times, view=view)
 
 def evaluate_spectral(data, times, view):

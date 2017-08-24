@@ -13,10 +13,9 @@ For each view all feature vectors are clustered to detec similarities between th
 subreddits. For now, all clustering algorithms are applied.
 '''
 
-import os
 import pandas as pd
 
-from examinlexica.helpers import get_subreddits, get_lexica_order
+from examinlexica.helpers import get_subreddits
 from examinlexica.constants import PATH
 from examinlexica.data import Data
 
@@ -41,10 +40,8 @@ class SubredditData(Data):
         Arguments:
             path:   Path to the folder containing the subreddits
         '''
-#        self.subreddit_list = get_subreddit_order()
         super().__init__(path)
         self.subreddits = get_subreddits(path, self.files)
-        self.order = []
         self.sentiments = {
             'normal': [],
             'maximum': [],
@@ -72,6 +69,7 @@ class SubredditData(Data):
         self.create_data_frame()
 
     def create_data_frame(self):
+        ''' Transform dictionary values from arrays into panda dataframes '''
         for view, sentiments in self.sentiments.items():
             if view == 'all':
                 extended_words = []
