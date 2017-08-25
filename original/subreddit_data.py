@@ -17,7 +17,7 @@ import pandas as pd
 
 from examinlexica.helpers import get_subreddits
 from examinlexica.constants import PATH
-from examinlexica.data import Data
+from examinlexica.original.data import Data
 
 class SubredditData(Data):
     '''

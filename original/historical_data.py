@@ -20,7 +20,7 @@ import pandas as pd
 
 from examinlexica.constants import PATH_HISTORICAL_ADJECTIVES
 from examinlexica.helpers import get_historical_adj
-from examinlexica.data import Data
+from examinlexica.original.data import Data
 
 class HistoricalData(Data):
     '''

@@ -8,7 +8,7 @@ Create an Clustered* object and run basic evaluation on the clusters:
 Return an easily readable output.
 '''
 
-from examinlexica.clustered_subreddits import ClusteredSubreddits
+from examinlexica.clusteredData.clustered_subreddits import ClusteredSubreddits
 from examinlexica.constants import PATH
 
 def evaluate_clusters(data, algorithm, times=0, view=None):

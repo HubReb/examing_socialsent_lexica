@@ -3,7 +3,6 @@
 
 ''' Helper functions to create a SubredditData object '''
 
-import sys
 import json
 import csv
 import spacy
@@ -23,9 +22,6 @@ def get_subreddits(path, files):
         with open(subreddits_file) as subreddits_file:
             return json.load(subreddits_file)
     sub_reddits = create_data(path, files)
-    if sub_reddits == {}:
-        print("No tsv files found! Did you specify the path correctly? Ending program!")
-        sys.exit()
     with open(subreddits_file, "w") as subreddits_in_file:
         json.dump(sub_reddits, subreddits_in_file)
     return sub_reddits
@@ -58,7 +54,7 @@ def get_historical_freq(path, files):
     if "frequencies.json" in files:
         with open("frequencies.json") as f:
             return json.load(f)
-    frequencies = create_data(path, files)
+    frequencies = create_data(files)
     with open(path + "frequencies.json", "w") as f:
         json.dump(frequencies, f)
     return frequencies

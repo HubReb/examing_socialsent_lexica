@@ -10,12 +10,12 @@ a predifined number of clusters to work, are skipped.
 
 import argparse
 
-from examinlexica.evaluate_all import evaluate_clusters_readable_output
+from examinlexica.evaluate.evaluate_all import evaluate_clusters_readable_output
 from examinlexica.constants import (
     PATH,
     ACCEPTABLE_OPTIONS
     )
-from examinlexica.clustered_subreddits import ClusteredSubreddits
+from examinlexica.clusteredData.clustered_subreddits import ClusteredSubreddits
 
 
 def evaluate_mini_batch(data, times, view):

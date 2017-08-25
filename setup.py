@@ -7,6 +7,7 @@ setup(name='examinlexica',
       url='https://gitlab.cl.uni-heidelberg.de/hubert/examining_socialsent_lexica',
       author='Rebekka Hubert',
       author_email='hubert@cl.uni-heidelberg.de',
-      packages=[''],
+      packages=['', 'clusteredData', 'evaluate', 'original'],
+      package_data = {'examinlexica' : ['historical/*.tsv', 'subreddits/*.tsv']},
       requires=['numpy', 'csv', 'sklearn', 'pandas', 'hdbscan'],
      )

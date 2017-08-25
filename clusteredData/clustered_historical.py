@@ -44,7 +44,7 @@ class ClusteredLexica:
                 path to the folder containin the clustered lexica
         '''
         self.clusters = {}
-        algorithms = ['meanShift', 'HDBSCAN', 'aggl', 'spectral', 'miniBatchKMeans']
+        algorithms = ['meanShift', 'HDBSCAN', 'aggl', 'spectral', 'miniBatchKmeans']
         self.set_clusters(algorithms)
         self.lexica_list = get_lexica_order(path)
         clustered_data = os.listdir(path_clusters)
@@ -94,4 +94,3 @@ class ClusteredLexica:
 
 if __name__ == '__main__':
     histSub = ClusteredLexica(PATH_HISTORICAL_FREQUENCIES, PATH_HISTORICAL_FREQUENCIES + 'results')
-    print(histSub.view_cluster('meanShift'))

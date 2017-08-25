@@ -30,8 +30,8 @@ import hdbscan
 import sklearn.cluster as cluster
 import numpy as np
 
-from examinlexica.subreddit_data import SubredditData
-from examinlexica.historical_data import HistoricalData
+from examinlexica.original.subreddit_data import SubredditData
+from examinlexica.original.historical_data import HistoricalData
 from examinlexica.constants import (
     PATH,
     HISTORICAL_OPTIONS,
