@@ -119,15 +119,15 @@ def start_cluster(data, result_path, number_of_clusters=0, matrix=None):
 
 def clarguments_checks(data, matrix, clusters):
     ''' basic plausability checks of command line arguments '''
+    if clusters < 0:
+        print('number of clusters cannot be smaller than 0!')
+        return False
     if data in HISTORICAL_OPTIONS.keys():
         if matrix:
             print('historical data only has one feature matrix')
             return False
     else:
-        if clusters < 0:
-            print('number of clusters cannot be smaller than 0!')
-            return False
-        elif not matrix:
+        if not matrix:
             print('specify a feature matrix!')
             return False
     return True

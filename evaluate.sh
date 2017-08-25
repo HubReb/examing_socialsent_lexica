@@ -1,12 +1,13 @@
 #!/bin/bash
 
+echo "Evaluating everything. This will take up to 20 hours!"
 # cluster data first
 python3 cluster.py subreddits -r subreddits -c 200 -m normal
 python3 cluster.py subreddits -r subreddits -c 200 -m minimum
 python3 cluster.py subreddits -r subreddits -c 200 -m maximum
 python3 cluster.py subreddits -r subreddits -c 200 -m all
-python3 cluster.py frequencies -r frequencies -c -8
-python3 cluster.py adjectives -r adjectives -c -8
+python3 cluster.py frequencies -r frequencies -c 8
+python3 cluster.py adjectives -r adjectives -c 8
 # evaluate clusters
 mkdir compas
 for i in {2..200}; do
