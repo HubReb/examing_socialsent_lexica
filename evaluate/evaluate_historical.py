@@ -19,14 +19,12 @@ from examinlexica.clusteredData.clustered_historical import ClusteredLexica
 from examinlexica.constants import HISTORICAL_OPTIONS
 import examinlexica.evaluate.evaluate_all as evaluate_all
 
-def evaluate_clusters(data, algorithm, times=0, view=None):
+def evaluate_clusters(data, algorithm, time=0, view=None):
     ''' basic evaluation of algorithms with manually selected n. of clusters '''
-    result_total = []
-    if times == 0:
-        result_total.append(data.view_cluster(algorithm))
+    if time == 0:
+        return data.view_cluster(algorithm)
     else:
-        for time in range(2, times+1):
-            result_total.append(data.view_cluster(algorithm, time))
+        return data.view_cluster(algorithm, time)
     return result_total
 
 evaluate_all.evaluate_clusters = evaluate_clusters

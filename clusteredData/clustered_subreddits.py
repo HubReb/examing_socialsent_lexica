@@ -8,6 +8,7 @@ Each cluster can be accessed via view(:number of cluster) key.
 '''
 
 import os
+import sys
 from collections import defaultdict
 import numpy as np
 
@@ -70,7 +71,11 @@ class ClusteredSubreddits:
         ''' Return clusters created using algorithm with number_of_clusters clusters'''
         if number_of_clusters == 0:
             return self.clusters[view][algorithm]
-        return self.clusters[view][algorithm][number_of_clusters]
+        try:
+            return self.clusters[view][algorithm][number_of_clusters]
+        except KeyError:
+            print('No corresponding result found. Did you use clster the data correctly?')
+            sys.exit()
 
     def view_cluster(self, algorithm, view, number_of_clusters=0):
         ''' Return result of algorithm (i. e. clusters) '''

@@ -77,28 +77,28 @@ def start_cluster(data, result_path, number_of_clusters=0, matrix=None):
         name = matrix + '_'
     else:
         name = ''
-    for nc in range(2, number_of_clusters+1):
+    if number_of_clusters:
         cluster_data(
             data,
             cluster.MiniBatchKMeans,
             (),
-            {'n_clusters':nc, 'batch_size':250},
-            name + "miniBatchKmeans_"+str(nc),
+            {'n_clusters':number_of_clusters, 'batch_size':100},
+            name + "miniBatchKmeans_"+str(number_of_clusters),
             result_path
         )
         cluster_data(
             data,
             cluster.AgglomerativeClustering,
             (),
-            {'n_clusters':nc, 'linkage':'average', 'affinity':'canberra'},
-            name + 'aggl_' + str(nc),
+            {'n_clusters':number_of_clusters, 'linkage':'average', 'affinity':'cosine'},
+            name + 'aggl_' + str(number_of_clusters),
             result_path
         )
     cluster_data(
         data,
         cluster.MeanShift,
         (),
-        {'min_bin_freq':2, 'cluster_all':True},
+        {'min_bin_freq':2, 'cluster_all':False},
         name + 'meanShift',
         result_path
     )
@@ -110,7 +110,7 @@ def start_cluster(data, result_path, number_of_clusters=0, matrix=None):
             'min_cluster_size':2,
             'min_samples':1,
             'cluster_selection_method':'leaf',
-            'metric':'canberra'
+            'metric':'infinity'
         },
         name + 'HDBSCAN',
         result_path
