@@ -57,7 +57,7 @@ def cluster_data(data, algorithm, args, kwds, name, result_folder):
     labels = algorithm(*args, **kwds).fit_predict(data)
     np.save(results + '/' + name + '_labels.npy', labels)
 
-def start_cluster(data, result_path, number_of_clusters=0, matrix=None):
+def start_cluster(processed_data, result_path, number_of_clusters=0, matrix=None):
     '''
     Function to start clustering, results are saved in a seperate folder.
     All clustering algorithms are applied to the given data.
@@ -73,10 +73,11 @@ def start_cluster(data, result_path, number_of_clusters=0, matrix=None):
             maximum values (maximum) or all three (all)
     '''
     if matrix:
-        data = data[matrix]
+        data = processed_data[matrix][:]
         name = matrix + '_'
     else:
         name = ''
+        data = processed_data[:]
     if number_of_clusters:
         cluster_data(
             data,
