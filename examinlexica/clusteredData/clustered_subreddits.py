@@ -13,7 +13,7 @@ from collections import defaultdict
 import numpy as np
 
 from examinlexica.helpers import get_lexica_order
-from examinlexica.constants import PATH
+from examinlexica.constants import PATH_CLUSTERS, PATH
 
 class ClusteredSubreddits:
     '''
@@ -69,6 +69,7 @@ class ClusteredSubreddits:
 
     def sort_clusters(self, algorithm, view, number_of_clusters=0):
         ''' Return clusters created using algorithm with number_of_clusters clusters'''
+        print(algorithm, view, number_of_clusters)
         if number_of_clusters == 0:
             return self.clusters[view][algorithm]
         try:
@@ -94,4 +95,4 @@ class ClusteredSubreddits:
         return np.histogram(array)
 
 if __name__ == '__main__':
-    clSub = ClusteredSubreddits(PATH, 'subreddits_results')
+    clSub = ClusteredSubreddits(PATH_CLUSTERS, PATH + 'subreddits_results/')

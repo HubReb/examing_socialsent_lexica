@@ -31,6 +31,7 @@ class Data:
 
     def compare_data_frames(self, index_one, index_two, word, view=None):
         if view:
+            print(self.sentiments[view])
             df = self.sentiments[view].loc[[index_one]][word]
             df2 = self.sentiments[view].loc[[index_two]][word]
         else:

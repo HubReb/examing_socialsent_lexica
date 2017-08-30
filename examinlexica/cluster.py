@@ -33,7 +33,7 @@ import numpy as np
 from examinlexica.original.subreddit_data import SubredditData
 from examinlexica.original.historical_data import HistoricalData
 from examinlexica.constants import (
-    PATH,
+    PATH_CLUSTERS,
     HISTORICAL_OPTIONS,
     ACCEPTABLE_OPTIONS
     )
@@ -79,14 +79,15 @@ def start_cluster(processed_data, result_path, number_of_clusters=0, matrix=None
         name = ''
         data = processed_data[:]
     if number_of_clusters:
-        cluster_data(
-            data,
-            cluster.MiniBatchKMeans,
-            (),
-            {'n_clusters':number_of_clusters, 'batch_size':100},
-            name + "miniBatchKmeans_"+str(number_of_clusters),
-            result_path
-        )
+#   same as old version; running yet agoin would be a waste of time
+#        cluster_data(
+#            data,
+#            cluster.MiniBatchKMeans,
+#            (),
+#            {'n_clusters':number_of_clusters, 'batch_size':100},
+#            name + "miniBatchKmeans_"+str(number_of_clusters),
+#            result_path
+#        )
         cluster_data(
             data,
             cluster.AgglomerativeClustering,
@@ -168,7 +169,7 @@ if __name__ == '__main__':
         hist_adj = HistoricalData(path)
         start_cluster(hist_adj.sentiments, args['results'], args['clusters'])
     else:
-        subreddits = SubredditData(PATH)
+        subreddits = SubredditData(PATH_CLUSTERS)
         start_cluster(
             subreddits.sentiments,
             args['results'],

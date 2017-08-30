@@ -12,29 +12,33 @@ import argparse
 
 from examinlexica.evaluate.evaluate_all import evaluate_clusters_readable_output
 from examinlexica.constants import (
+    PATH_CLUSTERS,
     PATH,
     ACCEPTABLE_OPTIONS
     )
 from examinlexica.clusteredData.clustered_subreddits import ClusteredSubreddits
 
+def check_number_of_clusters(nc):
+    if nc == 0:
+        print('Clustering without clusters?!')
+        return False
+    return True
 
 def evaluate_mini_batch(data, times, view):
     ''' evaluate clusters computed with mini batch kmeans '''
-    clusters = evaluate_clusters_readable_output(
-        data,
-        'miniBatchKmeans',
-        times,
-        view=view
-    )
-    return clusters
+    if check_number_of_clusters(times):
+        clusters = evaluate_clusters_readable_output(
+            data,
+            'miniBatchKmeans',
+            times,
+            view=view
+        )
+        return clusters
 
 def evaluate_agg(data, times, view):
     ''' evaluate clusters computed with agglomerative clustering '''
-    print(data, times, view)
-    if times == 0:
-        print('Clustering without clusters?!')
-        return
-    return evaluate_clusters_readable_output(data, 'aggl', times, view=view)
+    if check_number_of_clusters(times):
+        return evaluate_clusters_readable_output(data, 'aggl', times, view=view)
 
 def evaluate_spectral(data, times, view):
     ''' evaluate clusters computed with spectral clustering '''
@@ -53,7 +57,7 @@ if __name__ == '__main__':
     parser.add_argument(
         '-r',
         '--results',
-        default='.',
+        default='subreddits_results',
         help='folder for the results of clustering'
     )
     parser.add_argument(
@@ -69,7 +73,9 @@ if __name__ == '__main__':
         choices=ACCEPTABLE_OPTIONS,
     )
     args = vars(parser.parse_args())
-    clusters = ClusteredSubreddits(PATH, args['results'])
+    clusters = ClusteredSubreddits(PATH_CLUSTERS, PATH + args['results'])
+    print('MBatchKmeans', '-' * 30)
+    print(evaluate_mini_batch(clusters, args['clusters'], args['matrix']))
     print('AGGL\n', '__' * 30)
     print(evaluate_agg(clusters, args['clusters'], args['matrix']))
     print('MEANSHIFT\n', '__' *30)

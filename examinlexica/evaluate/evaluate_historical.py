@@ -77,7 +77,7 @@ if __name__ == '__main__':
     clusters = ClusteredLexica(path, args['results'])
     print('KMeans\n', '__' * 30)
     clusters_number = args['clusters']
-    #print(evaluate_mini_batch(clusters, clusters_number))
+    print(evaluate_mini_batch(clusters, clusters_number))
     print('AGGL\n', '__' * 30)
     print(evaluate_agg(clusters, clusters_number))
     print('MEANSHIFT\n', '__' *30)

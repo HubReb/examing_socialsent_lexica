@@ -16,7 +16,7 @@ subreddits. For now, all clustering algorithms are applied.
 import pandas as pd
 
 from examinlexica.helpers import get_subreddits
-from examinlexica.constants import PATH
+from examinlexica.constants import PATH_CLUSTERS, PATH
 from examinlexica.original.data import Data
 
 class SubredditData(Data):
@@ -119,6 +119,6 @@ class SubredditData(Data):
             raise AssertionError('Length of sentiment vectors is not correct!')
 
 if __name__ == '__main__':
-    subreddits = SubredditData(PATH)
+    subreddits = SubredditData(PATH_CLUSTERS)
     print('Subreddit Class works!')
     print(subreddits.compare_data_frames('darksouls.tsv', 'DarkSouls2.tsv', 'controller', 'normal'))
