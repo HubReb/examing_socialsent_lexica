@@ -4,11 +4,17 @@
 ''' Evaluate results of clustering '''
 
 import sys
+import argparse
 from collections import defaultdict
 
-from examinlexica.clustered_subreddits import ClusteredSubreddits
-from examinlexica.evaluate_all import evaluate_clusters
-from examinlexica.constants import ACCEPTABLE_OPTIONS, PATH
+from examinlexica.clusteredData.clustered_subreddits import ClusteredSubreddits
+from examinlexica.evaluate.evaluate_all import evaluate_clusters
+from examinlexica.constants import (
+    ACCEPTABLE_OPTIONS,
+    PATH_CLUSTERS,
+    PATH,
+    ALGORITHMS
+    )
 
 def prettier_print(results):
     ''' Print cluster dictionary in a pretty and readable format '''
@@ -17,7 +23,7 @@ def prettier_print(results):
         print('\n'.join(clusters))
 
 def compare_results(clusters_one, clusters_two):
-    ''' Compares two results of clustering and returns result.
+    ''' Compares two results of clustering algorithms and returns result.
 
     Compares the results of two clustering algorithms and looks for different clusters.
     All clusters differenting in their content (e. g. cluster 1.1 has 'a.tsv', but
@@ -56,17 +62,17 @@ def compare_results(clusters_one, clusters_two):
 
 def get_clusters(clusters):
     ''' Returns result of a clustering algorithm'''
-    number_of_clusters = int(clusters[3])
-    if number_of_clusters <= 2:
-        return evaluate_clusters(clusters[0], clusters[1], clusters[2])[0]
-    else:
-        calculated_clusters = evaluate_clusters(
+    number_of_clusters = int(clusters[2])
+    if number_of_clusters:
+         calculated_clusters = evaluate_clusters(
             clusters[0],
             clusters[1],
-            clusters[2],
-            int(clusters[3])
+            int(clusters[2]),
+            clusters[3]
         )
-    return calculated_clusters[int(clusters[3])-2]
+    else:
+        return evaluate_clusters(clusters[0], clusters[1], clusters[3])
+    return calculated_clusters
 
 def merge_clusters(dictionary, second_dict):
     ''' Merge two dictionaries into one '''
@@ -75,19 +81,64 @@ def merge_clusters(dictionary, second_dict):
     return dictionary
 
 if __name__ == '__main__':
-    if len(sys.argv) < 7 or sys.argv[2] not in ACCEPTABLE_OPTIONS:
-        print(
-            "usage: python3 compare.py",
-            "aggl|meanShift|HDBSCAN normal|maximum|all|minimum n_cl",
-            "aggl|meanShift|HDBSCAN normal|maximum|all|minimum n_cl"
-        )
-        sys.exit()
-    clustered_data = ClusteredSubreddits(PATH, "subreddits_results")
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        '-r',
+        '--results',
+        default=PATH+'subreddits_results',
+        help='folder of the results of clustering'
+    )
+    parser.add_argument(
+        '-c',
+        '--clusters',
+        default=0,
+        help='number of clusters used for aggl./KMeans clustering (alg. 1)',
+        type=int
+    )
+    parser.add_argument(
+        '-c_s',
+        '--clusters_second',
+        default=0,
+        help='number of clusters used for aggl./KMeans clustering (alg. 2)',
+        type=int
+    )
+    parser.add_argument(
+        'matrix_algorithm_one',
+        help='feature matrix composed of normal, minimal, maximal, all values',
+        choices=ACCEPTABLE_OPTIONS,
+    )
+    parser.add_argument(
+        'matrix_algorithm_two',
+        help='feature matrix composed of normal, minimal, maximal, all values',
+        choices=ACCEPTABLE_OPTIONS,
+    )
+    parser.add_argument(
+        'algorithm_one',
+        help='clustering algorithm used to create the first clusters',
+        choices=ALGORITHMS,
+    )
+    parser.add_argument(
+        'algorithm_two',
+        help='clustering algorithm used to create the second clusters',
+        choices=ALGORITHMS,
+    )
+    args = vars(parser.parse_args())
+    clustered_data = ClusteredSubreddits(PATH_CLUSTERS, args['results'])
     print(
         prettier_print(
             compare_results(
-                [clustered_data, sys.argv[2], sys.argv[1], sys.argv[3]],
-                [clustered_data, sys.argv[5], sys.argv[4], sys.argv[6]]
+                [
+                    clustered_data,
+                    args['algorithm_one'],
+                    args['clusters'],
+                    args['matrix_algorithm_one']
+                ],
+                [
+                    clustered_data,
+                    args['algorithm_two'],
+                    args['clusters_second'],
+                    args['matrix_algorithm_two']
+                ]
             )
         )
     )
