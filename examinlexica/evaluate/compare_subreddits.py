@@ -3,11 +3,8 @@
 ''' Functions to compare sentiment values of words in two subreddits '''
 
 import sys
-import argparse
 from collections import defaultdict
 import csv
-
-from examinlexica.constants import PATH
 
 def compare_reddits(reddit_one, reddit_two):
     '''
@@ -60,46 +57,21 @@ def save_results(result_string, name):
 
 def pretty_print(sentiments):
     ''' Return an easy to read string '''
-    result = 'word\t\t\t\t\t\tsentiment\t\tstandard derivation'.ljust(20)
+    result = 'word\t\t sentiment\t\tstandard derivation'
     for word, sentiment in sentiments.items():
         if len(sentiment) == 1:
             sentiment.append(['Nan', 'Nan'])
-        result += ('\n%s:' % word).ljust(20)
-        result += ('%s, %s' % (sentiment[0][0], sentiment[0][1])).rjust(20)
-        result += ('%s, %s' % (sentiment[1][0], sentiment[1][1])).rjust(20)
+        result += '\n%s:\t\t%s, %s\t\t%s, %s' % (
+            word,
+            sentiment[0][0],
+            sentiment[0][1],
+            sentiment[1][0],
+            sentiment[1][1]
+        )
     return result
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        '-f',
-        '--folder',
-        default=PATH + 'subreddits/',
-        help='folder containing the subreddits'
-    )
-    parser.add_argument(
-        'lexicon',
-        help='first lexicon to be compared',
-    )
-    parser.add_argument(
-        'second_lexicon',
-        help='second lexicon to be compared',
-    )
-    parser.add_argument(
-        '-r',
-        '--result',
-        default=PATH + 'compared_subreddits/',
-        help='folder containing the result of the comparision'
-    )
-    args = vars(parser.parse_args())
-    lexicon = args['folder'] + args['lexicon']
-    second_lexicon = args['folder'] + args['second_lexicon']
-    save_results(
-        pretty_print(
-            compare_reddits(
-                lexicon,
-                second_lexicon
-            )
-        ),
-        args['result'] + args['lexicon'] + '_' + args['second_lexicon'] + '_comparision'
-    )
+    if len(sys.argv) < 4:
+        print('usage: python3 compare_subreddits.py subreddit_one subreddit_two filename')
+        sys.exit()
+    save_results(pretty_print(compare_reddits(sys.argv[1], sys.argv[2])), sys.argv[3])
