@@ -33,7 +33,7 @@ import numpy as np
 from examinlexica.original.subreddit_data import SubredditData
 from examinlexica.original.historical_data import HistoricalData
 from examinlexica.constants import (
-    PATH,
+    PATH_CLUSTERS,
     HISTORICAL_OPTIONS,
     ACCEPTABLE_OPTIONS
     )
@@ -90,7 +90,7 @@ def start_cluster(data, result_path, number_of_clusters=0, matrix=None):
             data,
             cluster.AgglomerativeClustering,
             (),
-            {'n_clusters':number_of_clusters, 'linkage':'average', 'affinity':'canberaa'},
+            {'n_clusters':number_of_clusters, 'linkage':'average', 'affinity':'canberra'},
             name + 'aggl_' + str(number_of_clusters),
             result_path
         )
@@ -122,10 +122,6 @@ def clarguments_checks(data, matrix, clusters):
     if clusters < 0:
         print('number of clusters cannot be smaller than 0!')
         return False
-    if data in HISTORICAL_OPTIONS.keys():
-        if matrix:
-            print('historical data only has one feature matrix')
-            return False
     else:
         if not matrix:
             print('specify a feature matrix!')
@@ -153,8 +149,7 @@ if __name__ == '__main__':
         type=int
     )
     parser.add_argument(
-        '-m',
-        '--matrix',
+        'matrix',
         help='create feature matrix using normal, minimal, maximal or all three values',
         choices=ACCEPTABLE_OPTIONS,
         default=None
@@ -164,13 +159,12 @@ if __name__ == '__main__':
         sys.exit()
     if args['data'] in HISTORICAL_OPTIONS.keys():
         path = HISTORICAL_OPTIONS[args['data']]
-        hist_adj = HistoricalData(path)
-        start_cluster(hist_adj.sentiments, args['results'], args['clusters'])
+        data = HistoricalData(path)
     else:
-        subreddits = SubredditData(PATH)
-        start_cluster(
-            subreddits.sentiments,
-            args['results'],
-            args['clusters'],
-            args['matrix']
-        )
+        data = SubredditData(PATH_CLUSTERS)
+    start_cluster(
+        data.sentiments,
+        args['results'],
+        args['clusters'],
+        args['matrix']
+    )

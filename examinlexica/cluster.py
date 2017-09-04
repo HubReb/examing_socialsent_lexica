@@ -57,7 +57,7 @@ def cluster_data(data, algorithm, args, kwds, name, result_folder):
     labels = algorithm(*args, **kwds).fit_predict(data)
     np.save(results + '/' + name + '_labels.npy', labels)
 
-def start_cluster(processed_data, result_path, number_of_clusters=0, matrix=None):
+def start_cluster(data, result_path, number_of_clusters=0, matrix=None):
     '''
     Function to start clustering, results are saved in a seperate folder.
     All clustering algorithms are applied to the given data.
@@ -72,12 +72,7 @@ def start_cluster(processed_data, result_path, number_of_clusters=0, matrix=None
             whether to use original sentiments (normal), negative values (minimum),
             maximum values (maximum) or all three (all)
     '''
-    if matrix:
-        data = processed_data[matrix][:]
-        name = matrix + '_'
-    else:
-        name = ''
-        data = processed_data[:]
+    name = matrix + '_'
     if number_of_clusters:
 #   same as old version; running yet agoin would be a waste of time
 #        cluster_data(
@@ -100,7 +95,7 @@ def start_cluster(processed_data, result_path, number_of_clusters=0, matrix=None
         data,
         cluster.MeanShift,
         (),
-        {'min_bin_freq':2, 'cluster_all':False},
+        {'min_bin_freq':2, 'cluster_all':True},
         name + 'meanShift',
         result_path
     )
@@ -112,7 +107,7 @@ def start_cluster(processed_data, result_path, number_of_clusters=0, matrix=None
             'min_cluster_size':2,
             'min_samples':1,
             'cluster_selection_method':'leaf',
-            'metric':'infinity'
+            'metric':'euclidean'
         },
         name + 'HDBSCAN',
         result_path
@@ -124,10 +119,6 @@ def clarguments_checks(data, matrix, clusters):
     if clusters < 0:
         print('number of clusters cannot be smaller than 0!')
         return False
-    if data in HISTORICAL_OPTIONS.keys():
-        if matrix:
-            print('historical data only has one feature matrix')
-            return False
     else:
         if not matrix:
             print('specify a feature matrix!')
@@ -155,8 +146,7 @@ if __name__ == '__main__':
         type=int
     )
     parser.add_argument(
-        '-m',
-        '--matrix',
+        'matrix',
         help='create feature matrix using normal, minimal, maximal or all three values',
         choices=ACCEPTABLE_OPTIONS,
         default=None
@@ -166,13 +156,12 @@ if __name__ == '__main__':
         sys.exit()
     if args['data'] in HISTORICAL_OPTIONS.keys():
         path = HISTORICAL_OPTIONS[args['data']]
-        hist_adj = HistoricalData(path)
-        start_cluster(hist_adj.sentiments, args['results'], args['clusters'])
+        data = HistoricalData(path)
     else:
-        subreddits = SubredditData(PATH_CLUSTERS)
-        start_cluster(
-            subreddits.sentiments,
-            args['results'],
-            args['clusters'],
-            args['matrix']
-        )
+        data = SubredditData(PATH_CLUSTERS)
+    start_cluster(
+        data.sentiments,
+        args['results'],
+        args['clusters'],
+        args['matrix']
+    )
