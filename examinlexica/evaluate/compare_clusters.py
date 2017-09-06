@@ -7,7 +7,7 @@ import sys
 import argparse
 from collections import defaultdict
 
-from examinlexica.clusteredData.clustered_subreddits import ClusteredSubreddits
+from examinlexica.clusteredData.clustered_data import ClusteredData
 from examinlexica.evaluate.evaluate_all import evaluate_clusters
 from examinlexica.constants import (
     ACCEPTABLE_OPTIONS,
@@ -123,7 +123,7 @@ if __name__ == '__main__':
         choices=ALGORITHMS,
     )
     args = vars(parser.parse_args())
-    clustered_data = ClusteredSubreddits(PATH_CLUSTERS, args['results'])
+    clustered_data = ClusteredData(PATH_CLUSTERS, args['results'])
     print(
         prettier_print(
             compare_results(

@@ -57,7 +57,7 @@ def cluster_data(data, algorithm, args, kwds, name, result_folder):
     labels = algorithm(*args, **kwds).fit_predict(data)
     np.save(results + '/' + name + '_labels.npy', labels)
 
-def start_cluster(data, result_path, number_of_clusters=0, matrix=None):
+def start_cluster(data, result_path, matrix, number_of_clusters=0):
     '''
     Function to start clustering, results are saved in a seperate folder.
     All clustering algorithms are applied to the given data.
@@ -72,6 +72,7 @@ def start_cluster(data, result_path, number_of_clusters=0, matrix=None):
             whether to use original sentiments (normal), negative values (minimum),
             maximum values (maximum) or all three (all)
     '''
+    data = data[matrix][:]
     name = matrix + '_'
     if number_of_clusters:
 #   same as old version; running yet agoin would be a waste of time
@@ -87,7 +88,7 @@ def start_cluster(data, result_path, number_of_clusters=0, matrix=None):
             data,
             cluster.AgglomerativeClustering,
             (),
-            {'n_clusters':number_of_clusters, 'linkage':'average', 'affinity':'cosine'},
+            {'n_clusters':number_of_clusters, 'linkage':'complete', 'affinity':'cosine'},
             name + 'aggl_' + str(number_of_clusters),
             result_path
         )
@@ -159,9 +160,10 @@ if __name__ == '__main__':
         data = HistoricalData(path)
     else:
         data = SubredditData(PATH_CLUSTERS)
-    start_cluster(
-        data.sentiments,
-        args['results'],
-        args['clusters'],
-        args['matrix']
+    for i in ['normal', 'minimum', 'maximum', 'all']:
+        start_cluster(
+            data.sentiments,
+            args['results'],
+            i,
+            args['clusters']
     )

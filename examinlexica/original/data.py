@@ -29,7 +29,7 @@ class Data:
         for view, sentiments in self.sentiments.items():
             self.sentiments[view] = np.array(sentiments)
 
-    def compare_data_frames(self, index_one, index_two, word, view=None):
+    def compare_data_frames(self, index_one, index_two, word, view):
         if view:
             print(self.sentiments[view])
             df = self.sentiments[view].loc[[index_one]][word]

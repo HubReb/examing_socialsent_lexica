@@ -3,12 +3,12 @@
 
 
 '''
-Functions used to evaluate both CLusteredSubreddits and ClusteredLexica objects.
+Functions used to evaluate both CLusteredData and ClusteredLexica objects.
 Create an Clustered* object and run basic evaluation on the clusters:
 Return an easily readable output.
 '''
 
-from examinlexica.clusteredData.clustered_subreddits import ClusteredSubreddits
+from examinlexica.clusteredData.clustered_data import ClusteredData
 from examinlexica.constants import PATH
 
 def evaluate_clusters(data, algorithm, time=0, view=None):
@@ -33,4 +33,4 @@ def pretty_print(result):
     return result_total
 
 if __name__ == '__main__':
-    clusters = ClusteredSubreddits(PATH, "subreddits_results")
+    clusters = ClusteredData(PATH, "subreddits_results")

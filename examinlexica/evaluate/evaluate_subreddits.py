@@ -2,7 +2,7 @@
 # -+- coding: utf-8 -*-
 
 '''
-Create an CLusteredSubreddits object and evaluate it.
+Create an CLusteredData object and evaluate it.
 Return an easily readable string for every used clustering algorithm.
 If no clusters are specified, clustering algorithms, which need to have
 a predifined number of clusters to work, are skipped.
@@ -14,9 +14,10 @@ from examinlexica.evaluate.evaluate_all import evaluate_clusters_readable_output
 from examinlexica.constants import (
     PATH_CLUSTERS,
     PATH,
-    ACCEPTABLE_OPTIONS
+    ACCEPTABLE_OPTIONS,
+    HISTORICAL_OPTIONS
     )
-from examinlexica.clusteredData.clustered_subreddits import ClusteredSubreddits
+from examinlexica.clusteredData.clustered_data import ClusteredData
 
 def check_number_of_clusters(nc):
     if nc == 0:
@@ -55,10 +56,16 @@ def evaluate_hdbscan(data, view):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument(
+        'data',
+        help='data to be clustered',
+        choices=['subreddits', 'adjectives', 'frequencies'],
+    )
+
+    parser.add_argument(
         '-r',
         '--results',
         default='subreddits_results',
-        help='folder for the results of clustering'
+        help='folder of the results of clustering'
     )
     parser.add_argument(
         '-c',
@@ -73,7 +80,11 @@ if __name__ == '__main__':
         choices=ACCEPTABLE_OPTIONS,
     )
     args = vars(parser.parse_args())
-    clusters = ClusteredSubreddits(PATH_CLUSTERS, PATH + args['results'])
+    if args['data'] in HISTORICAL_OPTIONS.keys():
+        path = HISTORICAL_OPTIONS[args['data']]
+        clusters = ClusteredData(path, args['results'])
+    else:
+        clusters = ClusteredData(PATH_CLUSTERS, PATH + args['results'])
     print('MBatchKmeans', '-' * 30)
     print(evaluate_mini_batch(clusters, args['clusters'], args['matrix']))
     print('AGGL\n', '__' * 30)

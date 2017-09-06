@@ -42,7 +42,12 @@ class HistoricalData(Data):
         '''
         super().__init__(path)
         self.lexica = get_historical_adj(path, self.files)
-        self.sentiments = []
+        self.sentiments = {
+            'normal': [],
+            'maximum': [],
+            'minimum': [],
+            'all' : []
+        }
         self.set_sentiments()
         self.save_order()
 
@@ -53,28 +58,43 @@ class HistoricalData(Data):
         '''
         for lexicon in self.lexica.keys():
             self.order.append(lexicon)
-            sentiment = self.get_sentiment(lexicon)
-            self.sentiments.append(sentiment)
+            normal, maximum, minimum, sentiment_all = self.get_sentiment(lexicon)
+            self.sentiments['normal'].append(normal)
+            self.sentiments['maximum'].append(maximum)
+            self.sentiments['minimum'].append(minimum)
+            self.sentiments['all'].append(sentiment_all)
         self.transform_sentiments()
-        self.sentiments = pd.DataFrame(self.sentiments, columns=self.words)
-        self.sentiments.index = self.order
+        self.create_data_frame()
 
-    def transform_sentiments(self):
-        ''' Transform list of lists of sentiments into a numpy array '''
-        self.sentiments = np.array(self.sentiments)
+    def create_data_frame(self):
+        ''' Transform dictionary values from arrays into panda dataframes '''
+        for view, sentiments in self.sentiments.items():
+            if view == 'all':
+                extended_words = []
+                for word in self.words:
+                    extended_words.extend([word + 'min', word, word + 'max'])
+                self.sentiments[view] = pd.DataFrame(sentiments, columns=extended_words)
+            else:
+                self.sentiments[view] = pd.DataFrame(sentiments, columns=self.words)
+            self.sentiments[view].index = self.order
 
     def get_sentiment(self, lexicon):
         ''' return sentiments of words in lexicon '''
+        s_normal, s_maximum, s_minimum, s_all = [], [], [], []
         words_with_sentiment = self.lexica[lexicon].keys()
-        sentiment_in_lexicon = []
         for word in self.words:
             if word not in words_with_sentiment:
-                sentiment = 0
+                sentiment_min, sentiment, sentiment_max = 0, 0, 0
             else:
-                sentiment, _ = self.lexica[lexicon][word]
-            sentiment_in_lexicon.append(sentiment)
-        return sentiment_in_lexicon
+                sentiment, variance  = self.lexica[lexicon][word]
+                sentiment_min = round(sentiment - variance, 2)
+                sentiment_max = round(sentiment + variance, 2)
+            s_normal.append(sentiment)
+            s_minimum.append(sentiment_min)
+            s_maximum.append(sentiment_max)
+            s_all.extend([sentiment_min, sentiment, sentiment_max])
+        return s_normal, s_maximum, s_minimum, s_all
 
 if __name__ == '__main__':
     histo = HistoricalData(PATH_HISTORICAL_ADJECTIVES)
-    print(histo.compare_data_frames('1850.tsv', '1900.tsv', 'wretched'))
+    print(histo.compare_data_frames('1850.tsv', '1900.tsv', 'wretched', 'normal'))

@@ -12,3 +12,4 @@ HISTORICAL_OPTIONS = {
         'adjectives' : PATH_HISTORICAL_ADJECTIVES,
         'frequencies' : PATH_HISTORICAL_FREQUENCIES
 }
+ALGORITHMS = ['aggl', 'Kmeans', 'meanShift', 'HDBSCAN']
