@@ -68,19 +68,24 @@ def pretty_print(sentiments):
         result += ('\n%s:' % word).ljust(20)
         result += ('%s, %s' % (sentiment[0][0], sentiment[1][0])).rjust(20)
         result += ('%s, %s' % (sentiment[0][1], sentiment[1][1])).rjust(20)
-        if ['Nan', 'Nan'] not in sentiment:
-            average += (sentiment[0][0] - sentiment[1][0])**2
-            average_d += (sentiment[0][1] - sentiment[1][1])**2
+        if ['Nan', 'Nan'] not in sentiment:                 # euklidische Distanz
+            try:
+                average += round(abs(sentiment[0][0] - sentiment[1][0]), 2)
+                average_d += round(abs(sentiment[0][1] - sentiment[1][1]), 2)
+            except ZeroDivisionError:
+                average_d += round(abs(sentiment[0][1] - sentiment[1][1]), 2)
+            #average += (sentiment[0][0] - sentiment[1][0])**2
+            #average_d += (sentiment[0][1] - sentiment[1][1])**2
         else:
             not_both += 1
-            try:
-                average += sentiment[0][0]**2
-                average_d += sentiment[0][1]**2
-            except:
-                average += sentiment[1][0]**2
-                average_d += sentiment[1][1]**2
-    average = math.sqrt(average)
-    average_d = math.sqrt(average_d)
+            average_d += 1
+            average += 1
+            #    average += sentiment[0][0]**2
+            #    average_d += sentiment[0][1]**2
+            #    average += sentiment[1][0]**2
+            #    average_d += sentiment[1][1]**2
+#    average = math.sqrt(average)
+#    average_d = math.sqrt(average_d)
     return result, average, average_d, not_both
 
 if __name__ == '__main__':
