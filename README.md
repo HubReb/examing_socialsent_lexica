@@ -42,7 +42,7 @@ R. Hubert, email: hubert@cl.uni-heidelberg.de
 ## Acknowledgements
 All lexica used in this project are taken from the socialsent package. You can
 find the original socialsent packages and further explantions regarding the
-lexica [here][https://github.com/williamleif/socialsent].
+lexica [here](https://github.com/williamleif/socialsent).
 
 All further work is thus based on the following paper:
 > Inducing Domain-Specific Sentiment Lexicons from Unlabeled Corpora.
