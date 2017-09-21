@@ -69,13 +69,12 @@ class ClusteredSubreddits:
 
     def sort_clusters(self, algorithm, view, number_of_clusters=0):
         ''' Return clusters created using algorithm with number_of_clusters clusters'''
-        print(algorithm, view, number_of_clusters)
         if number_of_clusters == 0:
             return self.clusters[view][algorithm]
         try:
             return self.clusters[view][algorithm][number_of_clusters]
         except KeyError:
-            print('No corresponding result found. Did you use clster the data correctly?')
+            print('No corresponding result found. Did you cluster the data correctly?')
             sys.exit()
 
     def view_cluster(self, algorithm, view, number_of_clusters=0):

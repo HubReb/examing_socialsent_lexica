@@ -29,6 +29,11 @@ import argparse
 import hdbscan
 import sklearn.cluster as cluster
 import numpy as np
+from sklearn.manifold import TSNE
+import matplotlib
+matplotlib.use('Agg')
+from mpl_toolkits.mplot3d import Axes3D
+import matplotlib.pyplot as plt
 
 from examinlexica.original.subreddit_data import SubredditData
 from examinlexica.original.historical_data import HistoricalData
@@ -52,9 +57,18 @@ def cluster_data(data, algorithm, args, kwds, name, result_folder):
             does not exists it will be created by the function)
     '''
     results = result_folder + '_results'
+    u, s, v = np.linalg.svd(data, full_matrices=False)
     if not os.path.exists(results):
         os.makedirs(results)
-    labels = algorithm(*args, **kwds).fit_predict(data)
+    d = TSNE(n_components=3).fit_transform(data)
+    vis_x = d[:, 0]
+    vis_y = d[:, 1]
+    vis_z = d[:, 2]
+    fig = plt.figure(figsize=(32,30))
+    ax = fig.add_subplot(111, projection='3d')
+    labels = algorithm(*args, **kwds).fit_predict(u*s)
+    ax.scatter(vis_x, vis_y, vis_z, c=labels, cmap='viridis', s=300)
+    plt.savefig('graphs/' + name + '.png')
     np.save(results + '/' + name + '_labels.npy', labels)
 
 def start_cluster(data, result_path, matrix, number_of_clusters=0):
@@ -76,19 +90,19 @@ def start_cluster(data, result_path, matrix, number_of_clusters=0):
     name = matrix + '_'
     if number_of_clusters:
 #   same as old version; running yet agoin would be a waste of time
-#        cluster_data(
-#            data,
-#            cluster.MiniBatchKMeans,
-#            (),
-#            {'n_clusters':number_of_clusters, 'batch_size':100},
-#            name + "miniBatchKmeans_"+str(number_of_clusters),
-#            result_path
-#        )
+        cluster_data(
+            data,
+            cluster.KMeans,
+            (),
+            {'n_clusters':number_of_clusters},
+            name + "Kmeans_"+str(number_of_clusters),
+            result_path
+        )
         cluster_data(
             data,
             cluster.AgglomerativeClustering,
             (),
-            {'n_clusters':number_of_clusters, 'linkage':'complete', 'affinity':'cosine'},
+            {'n_clusters':number_of_clusters, 'linkage':'average', 'affinity':'canberra'},
             name + 'aggl_' + str(number_of_clusters),
             result_path
         )
@@ -108,7 +122,7 @@ def start_cluster(data, result_path, matrix, number_of_clusters=0):
             'min_cluster_size':2,
             'min_samples':1,
             'cluster_selection_method':'leaf',
-            'metric':'euclidean'
+            'metric':'canberra'
         },
         name + 'HDBSCAN',
         result_path
@@ -160,10 +174,9 @@ if __name__ == '__main__':
         data = HistoricalData(path)
     else:
         data = SubredditData(PATH_CLUSTERS)
-    for i in ['normal', 'minimum', 'maximum', 'all']:
-        start_cluster(
-            data.sentiments,
-            args['results'],
-            i,
-            args['clusters']
+    start_cluster(
+        data.sentiments,
+        args['results'],
+        args['matrix'],
+        args['clusters']
     )

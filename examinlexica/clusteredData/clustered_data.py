@@ -43,7 +43,7 @@ class ClusteredData:
             'maximum' : {},
             'all' : {}
             }
-        algorithms = ['meanShift', 'HDBSCAN', 'aggl', 'spectral', 'miniBatchKmeans']
+        algorithms = ['meanShift', 'HDBSCAN', 'aggl', 'spectral', 'Kmeans']
         self.set_clusters(algorithms)
         self.subreddit_list = get_lexica_order(path)
         clustered_data = os.listdir(path_clusters)

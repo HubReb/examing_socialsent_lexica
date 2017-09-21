@@ -3,10 +3,10 @@
 
 ''' Constants used in various scipts '''
 
-PATH = "/home/students/hubert/socialsent/socialsent/socialsent/data/lexicons/subreddits/examinlexica/"
-PATH_CLUSTERS = "/home/students/hubert/socialsent/socialsent/socialsent/data/lexicons/subreddits/examinlexica/subreddits/"
-PATH_HISTORICAL_ADJECTIVES = "/home/students/hubert/socialsent/socialsent/socialsent/data/lexicons/subreddits/examinlexica/historical/adjectives/"
-PATH_HISTORICAL_FREQUENCIES = "/home/students/hubert/socialsent/socialsent/socialsent/data/lexicons/subreddits/examinlexica/historical/frequencies/"
+PATH = "/home/students/hubert/socialsent/socialsent/socialsent/data/lexicons/subreddits/cosine/examinlexica/"
+PATH_CLUSTERS = "/home/students/hubert/socialsent/socialsent/socialsent/data/lexicons/subreddits/cosine/examinlexica/subreddits/"
+PATH_HISTORICAL_ADJECTIVES = "/home/students/hubert/socialsent/socialsent/socialsent/data/lexicons/subreddits/cosine/examinlexica/historical/adjectives/"
+PATH_HISTORICAL_FREQUENCIES = "/home/students/hubert/socialsent/socialsent/socialsent/data/lexicons/subreddits/cosine/examinlexica/historical/frequencies/"
 ACCEPTABLE_OPTIONS = ["normal", "minimum", "maximum", "all"]
 HISTORICAL_OPTIONS = {
         'adjectives' : PATH_HISTORICAL_ADJECTIVES,
