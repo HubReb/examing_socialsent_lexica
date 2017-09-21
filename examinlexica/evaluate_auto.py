@@ -27,6 +27,20 @@ MATRIX = ['minimum', 'maximum', 'normal', 'all']
 SUBPLOTS = [221, 222, 223, 224]
 # change this to look at different clusters
 RANGES = [i for i in range(2, 106)]
+PRECISION = {
+    'AGGL':{'normal':[], 'minimum':[], 'maximum':[], 'all':[]},
+    'Kmeans':{'normal':[], 'minimum':[], 'maximum':[], 'all':[]}
+}
+
+RECALL = {
+    'AGGL':{'normal':[], 'minimum':[], 'maximum':[], 'all':[]},
+    'Kmeans':{'normal':[], 'minimum':[], 'maximum':[], 'all':[]}
+}
+
+F_MEASURE = {
+    'AGGL':{'normal':[], 'minimum':[], 'maximum':[], 'all':[]},
+    'Kmeans':{'normal':[], 'minimum':[], 'maximum':[], 'all':[]}
+}
 
 def get_subreddit_labels(filename):
     ''' Return labels of subreddits '''
@@ -112,22 +126,9 @@ def get_data(filename, cluster_algorithm):
     return clusters
 
 
-precision = {
-    'AGGL':{'normal':[], 'minimum':[], 'maximum':[], 'all':[]},
-    'Kmeans':{'normal':[], 'minimum':[], 'maximum':[], 'all':[]}
-}
 
-recall = {
-    'AGGL':{'normal':[], 'minimum':[], 'maximum':[], 'all':[]},
-    'Kmeans':{'normal':[], 'minimum':[], 'maximum':[], 'all':[]}
-}
 
-f_measure = {
-    'AGGL':{'normal':[], 'minimum':[], 'maximum':[], 'all':[]},
-    'Kmeans':{'normal':[], 'minimum':[], 'maximum':[], 'all':[]}
-}
-
-for algorithm, vectors in precision.items():
+for algorithm, vectors in PRECISION.items():
     for cluster_number in RANGES:
         for matrix in vectors.keys():
             data = get_data(
@@ -139,36 +140,36 @@ for algorithm, vectors in precision.items():
                 get_subreddit_labels('subreddits.txt')
             )
             vectors[matrix].append(precisions)
-            recall[algorithm][matrix].append(recalls)
-            f_measure[algorithm][matrix].append(f_measures)
+            RECALL[algorithm][matrix].append(recalls)
+            F_MEASURE[algorithm][matrix].append(f_measures)
 
 plt.figure(figsize=(22, 20), dpi=120)
 for number, plot in enumerate(SUBPLOTS):
     plt.subplot(plot)
     plt.plot(
         RANGES,
-        recall['AGGL'][MATRIX[number]],
+        RECALL['AGGL'][MATRIX[number]],
         '-',
         c='b',
         label='Aggl. (Recall)'
     )
     plt.plot(
         RANGES,
-        precision['AGGL'][MATRIX[number]],
+        PRECISION['AGGL'][MATRIX[number]],
         ':',
         c='b',
         label='Kmeans (Precision)'
     )
     plt.plot(
         RANGES,
-        recall['Kmeans'][MATRIX[number]],
+        RECALL['Kmeans'][MATRIX[number]],
         '-',
         c='r',
         label='Kmeans'+' (Recall)'
     )
     plt.plot(
         RANGES,
-        precision['Kmeans'][MATRIX[number]],
+        PRECISION['Kmeans'][MATRIX[number]],
         ':',
         c='r',
         label='Kmeans (Precision)'
@@ -181,7 +182,7 @@ plt.close()
 plt.figure(figsize=(22, 20), dpi=120)
 for number, plot in enumerate(SUBPLOTS):
     plt.subplot(plot)
-    for algorithm, vectors in f_measure.items():
+    for algorithm, vectors in F_MEASURE.items():
         plt.plot(
             RANGES,
             vectors[MATRIX[number]],
