@@ -1,12 +1,15 @@
-import sklearn.cluster as cluster
-import numpy as np
-from sklearn.manifold import TSNE
-import matplotlib
-matplotlib.use('Agg')
-from mpl_toolkits.mplot3d import Axes3D
-import matplotlib.pyplot as plt
+#! /usr/bin/env python3
+# -*- coding: utf-8
+
+'''
+Calculates inter and inner cluster distances over each result and draws the
+corresponding graph.
+'''
 from random import randint
 
+import numpy as np
+import sklearn.cluster as cluster
+import matplotlib
 from examinlexica.original.subreddit_data import SubredditData
 from examinlexica.original.historical_data import HistoricalData
 from examinlexica.constants import (
@@ -14,29 +17,32 @@ from examinlexica.constants import (
     HISTORICAL_OPTIONS,
     ACCEPTABLE_OPTIONS
     )
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+
 
 def cluster_data(data, algorithm, args, kwds):
     '''
-    Cluster the given data and save the results in a npy-file
+    Cluster the given data and calculate inner or inter cluster distance
 
     Arguments:
         data: data to be clusterd
         algorithm: the algorithm used for clustering (method call!)
         args: all arguments to be passed to the algorithm method
         kwds: all  arguments to be passed to the algorithm method via key words
-        name: name of the file that will be used to save the result
-        result_folder: path to a folder, in which the results are stored (if folder
-            does not exists it will be created by the function)
     '''
-    data, s, v = np.linalg.svd(data, full_matrices=False)
-    clusterer = algorithm(*args, **kwds).fit(data)
+    u, s, _ = np.linalg.svd(data, full_matrices=False)
+    data_unclustered = u*s
+    clusterer = algorithm(*args, **kwds).fit(data_unclustered)
     centroids = clusterer.cluster_centers_
     labels = clusterer.labels_
     distances = []
+    # comment this out to get inter cluster distances
     for cluster_number, centroid in enumerate(centroids):
-        distance = get_distances(data, cluster_number, centroid, labels)
+        distance = get_distances(data_unclustered, cluster_number, centroid, labels)
         distances.append(distance)
     return np.mean(distances)
+    # uncomment this for inter cluster didtances
 #    return get_cluster_distances(centroids)
 
 def get_distances(data, cl_number, centroid, labels):
@@ -64,12 +70,13 @@ def all_distances(data):
     ''' Return all distances '''
     distances = []
     for i in range(2, 200):
-        distances.append(cluster_data(
+        distances.append(
+            cluster_data(
                 data,
                 cluster.KMeans,
                 (),
                 {'n_clusters':i},
-                )
+            )
         )
     return distances
 
