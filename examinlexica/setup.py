@@ -1,5 +1,21 @@
 #! /usr/bin/env python3
 # -*- coding: utf-8 -*-
+
+'''
+Run this setup to use examinlexica. 
+
+If setup fails, check if
+    - setup_requires package are installed
+    - setuptools is installed on your system
+
+If setup still fails, install packages (install_requires) yourself and either
+set PYTHONPATH variable or run setup script again.
+
+
+If you change any python code in this package, make sure to run this setup script
+afterward!
+'''
+
 try:
     from setuptools import setup
 except:
@@ -11,12 +27,12 @@ setup(name='examinlexica',
       author='Rebekka Hubert',
       author_email='hubert@cl.uni-heidelberg.de',
       packages=[
-        'examinlexica',
-        'examinlexica.clusteredData',
-        'examinlexica.evaluate',
-        'examinlexica.original'
-    ],
-      package_data = {'examinlexica' : ['historical/*.tsv', 'subreddits/*.tsv']},
-      setup_requires=["numpy", 'scipy'],
-      install_requires=['pandas','scikit-learn', 'scipy', 'numpy'],
+          'examinlexica',
+          'examinlexica.clusteredData',
+          'examinlexica.evaluate',
+          'examinlexica.original'
+      ],
+      package_data={'examinlexica' : ['historical/*.tsv', 'subreddits/*.tsv']},
+      setup_requires=['numpy', 'scipy'],
+      install_requires=['hdbscan', 'matplotlib', 'pandas', 'scikit-learn', 'scipy', 'numpy'],
      )
