@@ -28,13 +28,8 @@ import sys
 import argparse
 import hdbscan
 import sklearn.cluster as cluster
-import numpy as np
 from sklearn.manifold import TSNE
-import matplotlib
-matplotlib.use('Agg')
-from mpl_toolkits.mplot3d import Axes3D
-import matplotlib.pyplot as plt
-
+import numpy as np
 from examinlexica.original.subreddit_data import SubredditData
 from examinlexica.original.historical_data import HistoricalData
 from examinlexica.constants import (
@@ -42,6 +37,10 @@ from examinlexica.constants import (
     HISTORICAL_OPTIONS,
     ACCEPTABLE_OPTIONS
     )
+
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
 
 def cluster_data(data, algorithm, args, kwds, name, result_folder):
     '''
@@ -57,14 +56,14 @@ def cluster_data(data, algorithm, args, kwds, name, result_folder):
             does not exists it will be created by the function)
     '''
     results = result_folder + '_results'
-    u, s, v = np.linalg.svd(data, full_matrices=False)
+    u, s, _ = np.linalg.svd(data, full_matrices=False)
     if not os.path.exists(results):
         os.makedirs(results)
     d = TSNE(n_components=3).fit_transform(data)
     vis_x = d[:, 0]
     vis_y = d[:, 1]
     vis_z = d[:, 2]
-    fig = plt.figure(figsize=(32,30))
+    fig = plt.figure(figsize=(32, 30))
     ax = fig.add_subplot(111, projection='3d')
     labels = algorithm(*args, **kwds).fit_predict(u*s)
     ax.scatter(vis_x, vis_y, vis_z, c=labels, cmap='viridis', s=300)
@@ -89,7 +88,6 @@ def start_cluster(data, result_path, matrix, number_of_clusters=0):
     data = data[matrix][:]
     name = matrix + '_'
     if number_of_clusters:
-#   same as old version; running yet agoin would be a waste of time
         cluster_data(
             data,
             cluster.KMeans,
@@ -102,7 +100,11 @@ def start_cluster(data, result_path, matrix, number_of_clusters=0):
             data,
             cluster.AgglomerativeClustering,
             (),
-            {'n_clusters':number_of_clusters, 'linkage':'average', 'affinity':'canberra'},
+            {
+                'n_clusters':number_of_clusters,
+                'linkage':'average',
+                'affinity':'canberra'
+            },
             name + 'aggl_' + str(number_of_clusters),
             result_path
         )
@@ -129,7 +131,7 @@ def start_cluster(data, result_path, matrix, number_of_clusters=0):
     )
 
 
-def clarguments_checks(data, matrix, clusters):
+def clarguments_checks(matrix, clusters):
     ''' basic plausability checks of command line arguments '''
     if clusters < 0:
         print('number of clusters cannot be smaller than 0!')
@@ -167,7 +169,7 @@ if __name__ == '__main__':
         default=None
     )
     args = vars(parser.parse_args())
-    if not clarguments_checks(args['data'], args['matrix'], args['clusters']):
+    if not clarguments_checks(args['matrix'], args['clusters']):
         sys.exit()
     if args['data'] in HISTORICAL_OPTIONS.keys():
         path = HISTORICAL_OPTIONS[args['data']]
