@@ -32,8 +32,8 @@ The installation is started using
 
 > python3 setup.py install
 
-### Running the tests
-TODO
+### Usage
+
 ## Verion
 This is version 1.0
 ## Authors
