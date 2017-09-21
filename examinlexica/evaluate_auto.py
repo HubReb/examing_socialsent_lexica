@@ -9,14 +9,15 @@ Automatic evaluation of clusters using two measures:
     FN = subreddits whose labels are identical with that of a cluster, but are not
         part od that cluster
     measures:
-        precision, recall
+        purity, Fowlkes Mallows, adjusted rand index
 '''
 
-from collections import Counter
+from collections import Counter, defaultdict
 import numpy as np
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+from sklearn import metrics
 
 # constants:
 # change this to select outher source files
@@ -26,18 +27,18 @@ MATRIX = ['minimum', 'maximum', 'normal', 'all']
 # change this to change look of graphics
 SUBPLOTS = [221, 222, 223, 224]
 # change this to look at different clusters
-RANGES = [i for i in range(2, 106)]
-PRECISION = {
+RANGES = [i for i in range(10, 106)]
+PURITY = {
     'AGGL':{'normal':[], 'minimum':[], 'maximum':[], 'all':[]},
     'Kmeans':{'normal':[], 'minimum':[], 'maximum':[], 'all':[]}
 }
 
-RECALL = {
+RAND_INDEX = {
     'AGGL':{'normal':[], 'minimum':[], 'maximum':[], 'all':[]},
     'Kmeans':{'normal':[], 'minimum':[], 'maximum':[], 'all':[]}
 }
 
-F_MEASURE = {
+FOWLKES_MALLOWS = {
     'AGGL':{'normal':[], 'minimum':[], 'maximum':[], 'all':[]},
     'Kmeans':{'normal':[], 'minimum':[], 'maximum':[], 'all':[]}
 }
@@ -47,12 +48,13 @@ def get_subreddit_labels(filename):
     with open(filename) as f:
         clusters = f.read().split('\n')[:-1]
     reddit_labels = {}
+    labels = defaultdict(list)
     for reddit in clusters:
         reddit, label = reddit.split()
         reddit_labels[reddit] = label
     return reddit_labels
 
-def evaluate_clusters(clusters, labels, all_subs=False):
+def evaluate_clusters(clusters, labels):
     '''
     Calculate measures and return them
     Each cluster is first asigned a label by majority voting.
@@ -62,36 +64,45 @@ def evaluate_clusters(clusters, labels, all_subs=False):
     Parameters:
         clusters: list of clusters
         labels: dictionary of form: subreddit : label
-        all_subs: Boolean, determines if clusters containing only one subreddit are
-            considered
     Returns:
         calculated: precision, recall, f-measure
     '''
 
     correct = 0
-    all_s = 259
     percentage = []
+    false_p = 0
+    labels_predicted = []
+    labels_true = []
+    correct_clusters = 0
     for cluster in clusters:
-        if all_subs:
-            if len(cluster) == 1:
-                all_s -= 1
-                continue
         if cluster == []:
             percentage.append(0)
         label = []
         for reddit in cluster:
             label.append(labels[reddit])
+            labels_true.append(labels[reddit])
         cluster_label = Counter(label).most_common()[0][0]
+        labels_predicted.extend([cluster_label for i in range(len(label))])
         correct_clusters = len([reddit for reddit in cluster if labels[reddit] == cluster_label])
         correct += correct_clusters
-        percentage.append(correct_clusters/len(cluster))
-    if all_subs:
-        recall_cluster = correct/all_s
-    else:
-        recall_cluster = correct/250
-    precision_cluster = np.mean(percentage)
-    f_m = (2*precision_cluster*recall_cluster)/(precision_cluster + recall_cluster)
-    return recall_cluster, precision_cluster, f_m
+    if correct_clusters == 0:
+        print(clusters)
+    purity_clusters = correct_clusters/250
+    folks = metrics.fowlkes_mallows_score(labels_true, labels_predicted)
+    ad_rand_score = metrics.adjusted_rand_score(labels_true, labels_predicted)
+    if folks > 1:
+        print("ERROR folks", folks)
+        print(len(clusters))
+    if folks < 0:
+        print("ERROR hom", folks)
+        print(len(clusters))
+    if ad_rand_score > 1:
+        print("ERROR ad_rand_score", ad_rand_score)
+        print(len(clusters))
+    if ad_rand_score < 0:
+        print("ERROR ad_rand_score", ad_rand_score)
+        print(len(clusters))
+    return purity_clusters, folks, ad_rand_score
 
 def get_data(filename, cluster_algorithm):
     ''' Returns list of lists of subreddits created by the alg. Each list is a cluster. '''
@@ -128,69 +139,69 @@ def get_data(filename, cluster_algorithm):
 
 
 
-for algorithm, vectors in PRECISION.items():
+for algorithm, vectors in PURITY.items():
     for cluster_number in RANGES:
         for matrix in vectors.keys():
             data = get_data(
                 FILENAME  + matrix + str(cluster_number),
                 algorithm
             )
-            recalls, precisions, f_measures = evaluate_clusters(
+            purity, complete, homogen = evaluate_clusters(
                 data,
                 get_subreddit_labels('subreddits.txt')
             )
-            vectors[matrix].append(precisions)
-            RECALL[algorithm][matrix].append(recalls)
-            F_MEASURE[algorithm][matrix].append(f_measures)
+            vectors[matrix].append(purity)
+            RAND_INDEX[algorithm][matrix].append(complete)
+            FOWLKES_MALLOWS[algorithm][matrix].append(homogen)
 
 plt.figure(figsize=(22, 20), dpi=120)
 for number, plot in enumerate(SUBPLOTS):
     plt.subplot(plot)
     plt.plot(
         RANGES,
-        RECALL['AGGL'][MATRIX[number]],
+        RAND_INDEX['AGGL'][MATRIX[number]],
         '-',
         c='b',
-        label='Aggl. (Recall)'
+        label='Aggl. (adjusted rand index)'
     )
     plt.plot(
         RANGES,
-        PRECISION['AGGL'][MATRIX[number]],
+        PURITY['AGGL'][MATRIX[number]],
         ':',
         c='b',
-        label='Kmeans (Precision)'
+        label='Aggl. (Purity)'
     )
     plt.plot(
         RANGES,
-        RECALL['Kmeans'][MATRIX[number]],
+        RAND_INDEX['Kmeans'][MATRIX[number]],
         '-',
         c='r',
-        label='Kmeans'+' (Recall)'
+        label='Kmeans'+' (adjusted rand index)'
     )
     plt.plot(
         RANGES,
-        PRECISION['Kmeans'][MATRIX[number]],
+        PURITY['Kmeans'][MATRIX[number]],
         ':',
         c='r',
-        label='Kmeans (Precision)'
+        label='Kmeans (Purity)'
     )
     plt.title(MATRIX[number] + ' values')
     plt.legend()
 plt.subplot(222)
-plt.savefig('graphs/precision_recall_cosine_svd.png')
+plt.savefig('graphs/purity_and_adjusted_rand_sc_svd_cosine.png')
 plt.close()
 plt.figure(figsize=(22, 20), dpi=120)
 for number, plot in enumerate(SUBPLOTS):
     plt.subplot(plot)
-    for algorithm, vectors in F_MEASURE.items():
+    for algorithm, vectors in FOWLKES_MALLOWS.items():
         plt.plot(
             RANGES,
             vectors[MATRIX[number]],
-            label=algorithm + ' (F1-Measure)',
+            label=algorithm + ' (Fowlkes Mallows)'
         )
     plt.grid(True)
     plt.xlabel('Number of Clusters')
     plt.ylabel('correct classified subreddits')
     plt.title(MATRIX[number] + ' values')
     plt.legend()
-plt.savefig('graphs/f_measure_cosine_svd.png')
+plt.savefig('graphs/fowlkes_cosine_svd.png')
