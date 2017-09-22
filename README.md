@@ -45,17 +45,17 @@ script. This allows you to both set all basic parameters for the clustering as
 well see your results immediately.
 
 These basic, required parameters parameters are:
-    * the feature matrix, specifing whether to consider the standard derivation
-      of the word semantics and, if it is to be considered, in which way (you
-      can find further information in `cluster.py`
-    * data: whether to cluster the subreddit lexica or the historical lexica
+* the feature matrix, specifing whether to consider the standard derivation
+  of the word semantics and, if it is to be considered, in which way (you
+  can find further information in `cluster.py`
+* data: whether to cluster the subreddit lexica or the historical lexica
 
 You can also specify other parameters, though the script will work without
 using them:
-    * the number of clusters to use (both for Kmeans as well as agglomerative
-      clustering)
-    * the folder in which your results will be saved (the defaul folder for
-      this is \_results in your current directory).
+* the number of clusters to use (both for Kmeans as well as agglomerative
+  clustering)
+* the folder in which your results will be saved (the defaul folder for
+  this is \_results in your current directory).
 
 All parameters of the clustering algorithms themself must be specified in
 `cluster.py`.
@@ -77,11 +77,12 @@ will evaluate the purity of the clusters, the adjusted Rand Index and the
 Fowles Mallows Metric.
 The corresponding graphs are then stored in the graphs folder. 
 You can use the following arguments for the script: 
-    * c: number of cluster, the algorithm will evaluate all results starting at the
-      specified number
-    * c\_end: last number of clusters to be evaluated
-      e.g: using -c 5 and -c\_end results in the evaluation of the results
-      using 5, 6, 7, 8, 9 and 10 clusters
+* c: number of cluster, the algorithm will evaluate all results starting at the
+  specified number
+* c\_end: last number of clusters to be evaluated
+  e.g: using -c 5 and -c\_end results in the evaluation of the results
+  using 5, 6, 7, 8, 9 and 10 clusters
+* s: source file, this is where your clustering results have to be stored
 
 A typical call is 
 > `python3 evaluate_auto.py -c 10 -c_end 100 -s normal_sentimens'
