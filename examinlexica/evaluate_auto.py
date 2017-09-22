@@ -11,6 +11,8 @@ Automatic evaluation of clusters using two measures:
     measures:
         purity, Fowlkes Mallows, adjusted rand index
 '''
+import os
+import argparse
 
 from collections import Counter, defaultdict
 import numpy as np
@@ -21,13 +23,11 @@ from sklearn import metrics
 
 # constants:
 # change this to select outher source files
-FILENAME = 'graphs/cosine_euclidean_svd_single/comparision_labels_'
 # change this to determine used feature matrix
 MATRIX = ['minimum', 'maximum', 'normal', 'all']
 # change this to change look of graphics
 SUBPLOTS = [221, 222, 223, 224]
 # change this to look at different clusters
-RANGES = [i for i in range(10, 106)]
 PURITY = {
     'AGGL':{'normal':[], 'minimum':[], 'maximum':[], 'all':[]},
     'Kmeans':{'normal':[], 'minimum':[], 'maximum':[], 'all':[]}
@@ -85,8 +85,6 @@ def evaluate_clusters(clusters, labels):
         labels_predicted.extend([cluster_label for i in range(len(label))])
         correct_clusters = len([reddit for reddit in cluster if labels[reddit] == cluster_label])
         correct += correct_clusters
-    if correct_clusters == 0:
-        print(clusters)
     purity_clusters = correct_clusters/250
     folks = metrics.fowlkes_mallows_score(labels_true, labels_predicted)
     ad_rand_score = metrics.adjusted_rand_score(labels_true, labels_predicted)
@@ -107,7 +105,7 @@ def evaluate_clusters(clusters, labels):
 def get_data(filename, cluster_algorithm):
     ''' Returns list of lists of subreddits created by the alg. Each list is a cluster. '''
     clusters = []
-    algorithms = ['AGGL', 'HDBSCAN', 'MEANSHIFT', 'Kmeans']
+    algorithms = ['AGGL', 'Kmeans']
     with open(filename) as f:
         all_clusters = f.read().split('\n')
     start_point = False
@@ -138,70 +136,94 @@ def get_data(filename, cluster_algorithm):
 
 
 
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        '-s',
+        '--source',
+        default='../../../vergleiche/graphs/cosine_euclidean_svd_single',
+        help='folder of the results of clustering'
+    )
+    parser.add_argument(
+        '-c',
+        '--clusters',
+        default=10,
+        help='number of clusters used for clustering',
+        type=int
+    )
 
-for algorithm, vectors in PURITY.items():
-    for cluster_number in RANGES:
-        for matrix in vectors.keys():
-            data = get_data(
-                FILENAME  + matrix + str(cluster_number),
-                algorithm
-            )
-            purity, complete, homogen = evaluate_clusters(
-                data,
-                get_subreddit_labels('subreddits.txt')
-            )
-            vectors[matrix].append(purity)
-            RAND_INDEX[algorithm][matrix].append(complete)
-            FOWLKES_MALLOWS[algorithm][matrix].append(homogen)
+    parser.add_argument(
+        '-c_end',
+        '--clusters_end',
+        default=100,
+        help='number of clusters used for clustering',
+        type=int
+    )
+    args = vars(parser.parse_args())
+    FILENAME = args['source'] + '/comparision_labels_'
+    RANGES = [i for i in range(args['clusters'], args['clusters_end']+1)]
+    for algorithm, vectors in PURITY.items():
+        for cluster_number in RANGES:
+            for matrix in vectors.keys():
+                data = get_data(
+                    FILENAME  + matrix + str(cluster_number),
+                    algorithm
+                )
+                purity, complete, homogen = evaluate_clusters(
+                    data,
+                    get_subreddit_labels('subreddits.txt')
+                )
+                vectors[matrix].append(purity)
+                RAND_INDEX[algorithm][matrix].append(complete)
+                FOWLKES_MALLOWS[algorithm][matrix].append(homogen)
 
-plt.figure(figsize=(22, 20), dpi=120)
-for number, plot in enumerate(SUBPLOTS):
-    plt.subplot(plot)
-    plt.plot(
-        RANGES,
-        RAND_INDEX['AGGL'][MATRIX[number]],
-        '-',
-        c='b',
-        label='Aggl. (adjusted rand index)'
-    )
-    plt.plot(
-        RANGES,
-        PURITY['AGGL'][MATRIX[number]],
-        ':',
-        c='b',
-        label='Aggl. (Purity)'
-    )
-    plt.plot(
-        RANGES,
-        RAND_INDEX['Kmeans'][MATRIX[number]],
-        '-',
-        c='r',
-        label='Kmeans'+' (adjusted rand index)'
-    )
-    plt.plot(
-        RANGES,
-        PURITY['Kmeans'][MATRIX[number]],
-        ':',
-        c='r',
-        label='Kmeans (Purity)'
-    )
-    plt.title(MATRIX[number] + ' values')
-    plt.legend()
-plt.subplot(222)
-plt.savefig('graphs/purity_and_adjusted_rand_sc_svd_cosine.png')
-plt.close()
-plt.figure(figsize=(22, 20), dpi=120)
-for number, plot in enumerate(SUBPLOTS):
-    plt.subplot(plot)
-    for algorithm, vectors in FOWLKES_MALLOWS.items():
+    plt.figure(figsize=(22, 20), dpi=120)
+    for number, plot in enumerate(SUBPLOTS):
+        plt.subplot(plot)
         plt.plot(
             RANGES,
-            vectors[MATRIX[number]],
-            label=algorithm + ' (Fowlkes Mallows)'
+            RAND_INDEX['AGGL'][MATRIX[number]],
+            '-',
+            c='b',
+            label='Aggl. (adjusted rand index)'
         )
-    plt.grid(True)
-    plt.xlabel('Number of Clusters')
-    plt.ylabel('correct classified subreddits')
-    plt.title(MATRIX[number] + ' values')
-    plt.legend()
-plt.savefig('graphs/fowlkes_cosine_svd.png')
+        plt.plot(
+            RANGES,
+            PURITY['AGGL'][MATRIX[number]],
+            ':',
+            c='b',
+            label='Aggl. (Purity)'
+        )
+        plt.plot(
+            RANGES,
+            RAND_INDEX['Kmeans'][MATRIX[number]],
+            '-',
+            c='r',
+            label='Kmeans'+' (adjusted rand index)'
+        )
+        plt.plot(
+            RANGES,
+            PURITY['Kmeans'][MATRIX[number]],
+            ':',
+            c='r',
+            label='Kmeans (Purity)'
+        )
+        plt.title(MATRIX[number] + ' values')
+        plt.legend()
+    plt.savefig('graphs/purity_and_adjusted_rand.png')
+    plt.close()
+    plt.figure(figsize=(22, 20), dpi=120)
+    for number, plot in enumerate(SUBPLOTS):
+        plt.subplot(plot)
+        for algorithm, vectors in FOWLKES_MALLOWS.items():
+            plt.plot(
+                RANGES,
+                vectors[MATRIX[number]],
+                label=algorithm + ' (Fowlkes Mallows)'
+            )
+        plt.grid(True)
+        plt.xlabel('Number of Clusters')
+        plt.ylabel('correct classified subreddits')
+        plt.title(MATRIX[number] + ' values')
+        plt.legend()
+    plt.savefig('graphs/fowlkes.png')

@@ -159,7 +159,7 @@ if __name__ == '__main__':
         '-c',
         '--clusters',
         default=0,
-        help='number of clusters used for aggl. clustering',
+        help='number of clusters used for aggl. and Kmeans clustering',
         type=int
     )
     parser.add_argument(
