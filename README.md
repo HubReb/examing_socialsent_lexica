@@ -85,7 +85,7 @@ You can use the following arguments for the script:
 * s: source file, this is where your clustering results have to be stored
 
 A typical call is 
-> `python3 evaluate_auto.py -c 10 -c_end 100 -s normal_sentimens'
+> `python3 evaluate_auto.py -c 10 -c_end 100 -s normal_sentimens`
 
 ## Version
 This is version 1.0
