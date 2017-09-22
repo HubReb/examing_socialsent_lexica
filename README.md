@@ -86,6 +86,8 @@ You can use the following arguments for the script:
 
 A typical call is 
 > `python3 evaluate_auto.py -c 10 -c_end 100 -s normal_sentimens`
+This results in the evaluation of all results using the cluster numbers 10
+through 100.
 
 ## Version
 This is version 1.0
