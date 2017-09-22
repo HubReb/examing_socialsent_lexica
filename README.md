@@ -35,7 +35,7 @@ All required constants are explained there.
 
 The actual installation is done using
 
-> python3 setup.py install
+> `python3 setup.py install`
 
 If you encounter any error, consult the documentation in the setup script.
 
