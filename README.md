@@ -44,7 +44,7 @@ If you encounter any error, consult the documentation in the setup script.
 ### Usage
 The easiest way to use this package is to simply call the `get_clusters.py`
 script. This allows you to both set all basic parameters for the clustering as
-well see your results immediately.
+well as see your results immediately.
 
 These basic, required parameters parameters are:
 * the feature matrix, specifing whether to consider the standard derivation
