@@ -16,10 +16,12 @@ word sentiments.
 examinlexica is written in python3, thus all requirements refer to python3 as
 well.
 The following packages are required to use the examinlexica package:
+
 * numpy
 * scipy
 * cython
 * setuptools
+
 All further requirements can be installed using the setup script. If you do not
 wish to use it, all further prerequisites are listed there. 
 However, you have to set your PYTHONPATH environment variable yourself then.
