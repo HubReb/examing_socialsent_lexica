@@ -41,6 +41,7 @@ from examinlexica.constants import (
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
 
 def cluster_data(data, algorithm, args, kwds, name, result_folder):
     '''
@@ -63,14 +64,21 @@ def cluster_data(data, algorithm, args, kwds, name, result_folder):
     vis_x = d[:, 0]
     vis_y = d[:, 1]
     vis_z = d[:, 2]
-    fig = plt.figure(figsize=(32, 30))
+    fig = plt.figure(figsize=(12, 10))
     ax = fig.add_subplot(111, projection='3d')
     labels = algorithm(*args, **kwds).fit_predict(u*s)
-    ax.scatter(vis_x, vis_y, vis_z, c=labels, cmap='viridis', s=300)
-    plt.savefig('graphs/' + name + '.png')
+    colors = [plt.cm.plasma(float(i)/max(labels)) for i in labels]
+    classes = list(set(labels))
+    for i, u in enumerate(classes):
+        v_x = [vis_x[j] for j in range(len(vis_x)) if labels[j] == u]
+        v_y = [vis_y[j] for j in range(len(vis_y)) if labels[j] == u]
+        v_z = [vis_z[j] for j in range(len(vis_z)) if labels[j] == u]
+        ax.scatter(v_x, v_y, v_z, c=colors[i], s=150,label=str(u))
+    plt.legend()
+    plt.savefig('graphs/' + name + '.png', bbox_inches='tight')
     np.save(results + '/' + name + '_labels.npy', labels)
 
-def start_cluster(data, result_path, matrix, number_of_clusters=0):
+def start_cluster(data, result_path, matrix, number_of_clusters, algorithm):
     '''
     Function to start clustering, results are saved in a seperate folder.
     All clustering algorithms are applied to the given data.
@@ -86,49 +94,53 @@ def start_cluster(data, result_path, matrix, number_of_clusters=0):
             maximum values (maximum) or all three (all)
     '''
     data = data[matrix][:]
+    zero_rate = 0
+    lines = 0
+    for line in data:
+        zero_rate += (len(line) - np.count_nonzero(line))/len(line)
+        lines += 1
     name = matrix + '_'
+    if algorithm == 'all':
+        algorithm = ['KMEANS', 'HDBSCAN', 'AGGL']
+    else:
+        algorithm = [algorithm.upper()]
     if number_of_clusters:
+        if 'KMEANS' in algorithm:
+            cluster_data(
+                data,
+                cluster.KMeans,
+                (),
+                {'n_clusters':number_of_clusters},
+                name + "Kmeans_"+str(number_of_clusters),
+                result_path
+            )
+        if 'AGGL' in algorithm:
+            cluster_data(
+                data,
+                cluster.AgglomerativeClustering,
+                (),
+                {
+                    'n_clusters':number_of_clusters,
+                    'linkage':'average',
+                    'affinity':'euclidean'
+                },
+                name + 'aggl_' + str(number_of_clusters),
+                result_path
+            )
+    if 'HDBSCAN' in algorithm:
         cluster_data(
             data,
-            cluster.KMeans,
-            (),
-            {'n_clusters':number_of_clusters},
-            name + "Kmeans_"+str(number_of_clusters),
-            result_path
-        )
-        cluster_data(
-            data,
-            cluster.AgglomerativeClustering,
+            hdbscan.HDBSCAN,
             (),
             {
-                'n_clusters':number_of_clusters,
-                'linkage':'average',
-                'affinity':'canberra'
+                'min_cluster_size':2,
+                'min_samples':1,
+                'cluster_selection_method':'leaf',
+                'metric':'euclidean'
             },
-            name + 'aggl_' + str(number_of_clusters),
+            name + 'HDBSCAN',
             result_path
         )
-    cluster_data(
-        data,
-        cluster.MeanShift,
-        (),
-        {'min_bin_freq':2, 'cluster_all':True},
-        name + 'meanShift',
-        result_path
-    )
-    cluster_data(
-        data,
-        hdbscan.HDBSCAN,
-        (),
-        {
-            'min_cluster_size':2,
-            'min_samples':1,
-            'cluster_selection_method':'leaf',
-            'metric':'canberra'
-        },
-        name + 'HDBSCAN',
-        result_path
-    )
 
 
 def clarguments_checks(matrix, clusters):
@@ -149,6 +161,14 @@ if __name__ == '__main__':
         help='data to be clustered',
         choices=['subreddits', 'adjectives', 'frequencies'],
     )
+    parser.add_argument(
+        '-a',
+        '--algorithm',
+        help='algorithm to use for clustering',
+        default='all',
+        choices=['Aggl', 'Kmeans', 'HDBSCAN'],
+    )
+
     parser.add_argument(
         '-r',
         '--results',
@@ -180,5 +200,6 @@ if __name__ == '__main__':
         data.sentiments,
         args['results'],
         args['matrix'],
-        args['clusters']
+        args['clusters'],
+        args['algorithm']
     )

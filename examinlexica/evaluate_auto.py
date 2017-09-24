@@ -33,7 +33,7 @@ PURITY = {
     'Kmeans':{'normal':[], 'minimum':[], 'maximum':[], 'all':[]}
 }
 
-RAND_INDEX = {
+AD_INF = {
     'AGGL':{'normal':[], 'minimum':[], 'maximum':[], 'all':[]},
     'Kmeans':{'normal':[], 'minimum':[], 'maximum':[], 'all':[]}
 }
@@ -70,14 +70,15 @@ def evaluate_clusters(clusters, labels):
 
     correct = 0
     percentage = []
-    false_p = 0
     labels_predicted = []
     labels_true = []
     correct_clusters = 0
+    all_c = 250
     for cluster in clusters:
-        if cluster == []:
-            percentage.append(0)
         label = []
+        if len(cluster) == 1:
+            all_c -= 1
+            continue
         for reddit in cluster:
             label.append(labels[reddit])
             labels_true.append(labels[reddit])
@@ -85,27 +86,20 @@ def evaluate_clusters(clusters, labels):
         labels_predicted.extend([cluster_label for i in range(len(label))])
         correct_clusters = len([reddit for reddit in cluster if labels[reddit] == cluster_label])
         correct += correct_clusters
-    purity_clusters = correct_clusters/250
-    folks = metrics.fowlkes_mallows_score(labels_true, labels_predicted)
-    ad_rand_score = metrics.adjusted_rand_score(labels_true, labels_predicted)
-    if folks > 1:
-        print("ERROR folks", folks)
+    purity_clusters = correct/all_c
+    ad_info = metrics.adjusted_mutual_info_score(labels_true, labels_predicted)
+    if ad_info > 1:
+        print("ERROR normalized", ad_info)
         print(len(clusters))
-    if folks < 0:
-        print("ERROR hom", folks)
+    if ad_info < 0:
+        print("ERROR ami_score", ad_info)
         print(len(clusters))
-    if ad_rand_score > 1:
-        print("ERROR ad_rand_score", ad_rand_score)
-        print(len(clusters))
-    if ad_rand_score < 0:
-        print("ERROR ad_rand_score", ad_rand_score)
-        print(len(clusters))
-    return purity_clusters, folks, ad_rand_score
+    return purity_clusters, ad_info
 
 def get_data(filename, cluster_algorithm):
     ''' Returns list of lists of subreddits created by the alg. Each list is a cluster. '''
     clusters = []
-    algorithms = ['AGGL', 'Kmeans']
+    algorithms = ['AGGL', 'Kmeans', 'MEANSHIFT', 'HDBSCAN']
     with open(filename) as f:
         all_clusters = f.read().split('\n')
     start_point = False
@@ -127,7 +121,7 @@ def get_data(filename, cluster_algorithm):
                 if label_number.endswith('-1'):
                     datapoints = datapoints.split(', ')
                     for point in datapoints:
-                        clusters.append([point])
+                        clusters.append([point.strip()])
                 else:
                     clusters.append([point.strip(',') for point in datapoints.split()])
             except ValueError:
@@ -162,6 +156,7 @@ if __name__ == '__main__':
     args = vars(parser.parse_args())
     FILENAME = args['source'] + '/comparision_labels_'
     RANGES = [i for i in range(args['clusters'], args['clusters_end']+1)]
+    plt.figure(figsize=(22, 16))
     for algorithm, vectors in PURITY.items():
         for cluster_number in RANGES:
             for matrix in vectors.keys():
@@ -169,23 +164,21 @@ if __name__ == '__main__':
                     FILENAME  + matrix + str(cluster_number),
                     algorithm
                 )
-                purity, complete, homogen = evaluate_clusters(
+                purity, ad_sc = evaluate_clusters(
                     data,
                     get_subreddit_labels('subreddits.txt')
                 )
                 vectors[matrix].append(purity)
-                RAND_INDEX[algorithm][matrix].append(complete)
-                FOWLKES_MALLOWS[algorithm][matrix].append(homogen)
+                AD_INF[algorithm][matrix].append(ad_sc)
 
-    plt.figure(figsize=(22, 20), dpi=120)
     for number, plot in enumerate(SUBPLOTS):
         plt.subplot(plot)
         plt.plot(
             RANGES,
-            RAND_INDEX['AGGL'][MATRIX[number]],
+            AD_INF['AGGL'][MATRIX[number]],
             '-',
             c='b',
-            label='Aggl. (adjusted rand index)'
+            label='Aggl. (AMI)'
         )
         plt.plot(
             RANGES,
@@ -196,10 +189,10 @@ if __name__ == '__main__':
         )
         plt.plot(
             RANGES,
-            RAND_INDEX['Kmeans'][MATRIX[number]],
+            AD_INF['Kmeans'][MATRIX[number]],
             '-',
             c='r',
-            label='Kmeans'+' (adjusted rand index)'
+            label='Kmeans'+' (AMI)'
         )
         plt.plot(
             RANGES,
@@ -210,20 +203,9 @@ if __name__ == '__main__':
         )
         plt.title(MATRIX[number] + ' values')
         plt.legend()
-    plt.savefig('graphs/purity_and_adjusted_rand.png')
-    plt.close()
-    plt.figure(figsize=(22, 20), dpi=120)
-    for number, plot in enumerate(SUBPLOTS):
-        plt.subplot(plot)
-        for algorithm, vectors in FOWLKES_MALLOWS.items():
-            plt.plot(
-                RANGES,
-                vectors[MATRIX[number]],
-                label=algorithm + ' (Fowlkes Mallows)'
-            )
         plt.grid(True)
-        plt.xlabel('Number of Clusters')
-        plt.ylabel('correct classified subreddits')
-        plt.title(MATRIX[number] + ' values')
-        plt.legend()
-    plt.savefig('graphs/fowlkes.png')
+    plt.subplots_adjust(top=0.92, bottom=0.10, left=0.10, right=0.95, hspace=0.45,
+                    wspace=0.4)
+
+    plt.savefig('graphs/purity_and_adjusted_rand.png', bbbox='tight')
+    plt.close()

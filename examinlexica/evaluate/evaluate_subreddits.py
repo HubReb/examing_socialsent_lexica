@@ -77,7 +77,7 @@ if __name__ == '__main__':
     parser.add_argument(
         '-r',
         '--results',
-        default='subreddits_results',
+        default='_results',
         help='folder of the results of clustering'
     )
     parser.add_argument(
@@ -92,15 +92,32 @@ if __name__ == '__main__':
         help='create feature matrix using specified feature vectors',
         choices=ACCEPTABLE_OPTIONS,
     )
+    parser.add_argument(
+        '-a',
+        '--algorithm',
+        help='algorithm to use for clustering',
+        default='all',
+        choices=['Aggl', 'Kmeans', 'HDBSCAN'],
+    )
+
     args = vars(parser.parse_args())
     if args['data'] in HISTORICAL_OPTIONS.keys():
         path = HISTORICAL_OPTIONS[args['data']]
         clusters = ClusteredData(path, args['results'])
     else:
         clusters = ClusteredData(PATH_CLUSTERS, PATH + args['results'])
-    print('Kmeans\n', '_' * 30)
-    print(evaluate_kmeans(clusters, args['clusters'], args['matrix']))
-    print('AGGL\n', '__' * 30)
-    print(evaluate_agg(clusters, args['clusters'], args['matrix']))
-    print('HDBSCAN\n', '__' *30)
-    print(evaluate_hdbscan(clusters, args['matrix']))
+    algorithms = {
+        'Aggl' : evaluate_agg(clusters, args['clusters'], args['matrix']),
+        'Kmeans' : evaluate_kmeans(clusters, args['clusters'], args['matrix']),
+        'HDBSCAN' : evaluate_hdbscan(clusters, args['matrix'])
+    }
+    if args['algorithm'] == 'all':
+        print('Kmeans\n', '_' * 30)
+        print(evaluate_kmeans(clusters, args['clusters'], args['matrix']))
+        print('AGGL\n', '__' * 30)
+        print(evaluate_agg(clusters, args['clusters'], args['matrix']))
+        print('HDBSCAN\n', '__' *30)
+        print(evaluate_hdbscan(clusters, args['matrix']))
+    else:
+        cluster_algorithm = algorithms[args['algorithm']]
+        print(cluster_algorithm)
