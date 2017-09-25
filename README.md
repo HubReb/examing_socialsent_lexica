@@ -71,6 +71,8 @@ word sentiments and an end result of ten clusters. Your results are saved in
 the file `normal_sentiments_results/Kmeans_normal_10.txt`.
 In this txt-file you will find a listing of the achieved clusters in an easily
 readable way.
+**Caution: You must never run two clustering process at the same time as it
+ruins your results.**
 
 This package also contains the option to evaluate your results and visualize
 them in the evaluate module. Their usage is explained in the modules README.
