@@ -20,6 +20,9 @@ The following packages are required to use the examinlexica package:
 * numpy
 * scipy
 * cython
+* spacy
+* hdbscan
+* matplotlib
 * setuptools
 
 All further requirements can be installed using the setup script. If you do not
