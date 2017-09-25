@@ -1,4 +1,4 @@
-examinlexica - evaluate-Module
+examinlexica - evaluate-module
 ==============================
 
 ## Overview
@@ -7,7 +7,7 @@ cluster-files.
 
 ### Usage
 You have three options to visualize your data: `evaluate_auto.py`, `size.py`, 
-`single\_clusters.py`.
+`single_clusters.py`.
 
 #### evaluate\_auto.py
 Use this script to evaluate your results using purity and adjusted mutual
