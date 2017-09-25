@@ -22,6 +22,7 @@ setup(name='examinlexica',
           'hdbscan',
           'pandas',
           'scikit-learn',
+          'matplotlib',
           'spacy',
           'scipy',
           'numpy'
