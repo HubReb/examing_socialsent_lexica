@@ -56,40 +56,24 @@ You can also specify other parameters, though the script will work without
 using them:
 * the number of clusters to use (both for Kmeans as well as agglomerative
   clustering)
-* the folder in which your results will be saved (the defaul folder for
+* the folder in which your results are saved (the default folder for
   this is \_results in your current directory).
 
-All parameters of the clustering algorithms themself must be specified in
+All parameters of the clustering algorithms themselves must be specified in
 `cluster.py`.
 
 A typical call of get\_clusters.py would be:
 
-> `python3 get_clusters.py subreddits normal -c 10 -r normal_sentiments`
+> `python3 get_clusters.py subreddits normal -c 10 -a Kmeans -r normal_sentiments`
 
 This starts the algorithm with the subreddit lexica, the original socialsent
 word sentiments and an end result of ten clusters. Your results are saved in
-the file `normal_sentiments_results/normal_10.txt`.
+the file `normal_sentiments_results/Kmeans_normal_10.txt`.
 In this txt-file you will find a listing of the achieved clusters in an easily
 readable way.
 
 This package also contains the option to evaluate your results and visualize
-them. In order to do this, you must first have a few more results (at least ten
-different cluster numbers). Then you have to call the `evaluate_auto.py` script. This
-will evaluate the purity of the clusters, the adjusted Rand Index and the
-Fowles Mallows Metric.
-The corresponding graphs are then stored in the graphs folder. 
-You can use the following arguments for the script: 
-* c: number of cluster, the algorithm will evaluate all results starting at the
-  specified number
-* c\_end: last number of clusters to be evaluated
-  e.g: using -c 5 and -c\_end results in the evaluation of the results
-  using 5, 6, 7, 8, 9 and 10 clusters
-* s: source file, this is where your clustering results have to be stored
-
-A typical call is 
-> `python3 evaluate_auto.py -c 10 -c_end 100 -s normal_sentimens`
-This results in the evaluation of all results using the cluster numbers 10
-through 100.
+them in the evaluate module. Their usage is explained in the modules README.
 
 ## Version
 This is version 1.0
@@ -104,7 +88,7 @@ All lexica used in this project are taken from the socialsent package. You can
 find the original socialsent packages and further explanations regarding the
 lexica [here](https://github.com/williamleif/socialsent).
 
-All further work is thus based on the following paper:
+This work is based on the following paper:
 > Inducing Domain-Specific Sentiment Lexicons from Unlabeled Corpora.
 > Proceedings of EMNLP. 2016.
 > --<cite> William L. Hamilton, Kevin Clark, Jure Leskovec, and Dan
