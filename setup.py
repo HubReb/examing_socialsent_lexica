@@ -17,14 +17,9 @@ setup(name='examinlexica',
         'examinlexica.original'
     ],
       package_data = {'examinlexica' : ['historical/*.tsv', 'subreddits/*.tsv']},
-      setup_requires=['numpy', 'scipy', 'cython'],
+      setup_requires=['numpy', 'scipy', 'cython','spacy', 'hdbscan', 'matplotlib'],
       install_requires=[
-          'hdbscan',
           'pandas',
           'scikit-learn',
-          'matplotlib',
-          'spacy',
-          'scipy',
-          'numpy'
       ],
      )

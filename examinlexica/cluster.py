@@ -69,13 +69,14 @@ def cluster_data(data, algorithm, args, kwds, name, result_folder):
     labels = algorithm(*args, **kwds).fit_predict(u*s)
     colors = [plt.cm.plasma(float(i)/max(labels)) for i in labels]
     classes = list(set(labels))
+    if not os.path.exists('graphs'):
+        os.makedirs('graphs')
     for i, u in enumerate(classes):
         v_x = [vis_x[j] for j in range(len(vis_x)) if labels[j] == u]
         v_y = [vis_y[j] for j in range(len(vis_y)) if labels[j] == u]
         v_z = [vis_z[j] for j in range(len(vis_z)) if labels[j] == u]
         ax.scatter(v_x, v_y, v_z, c=colors[i], s=150,label=str(u))
     plt.legend()
-    plt.show()
     plt.savefig('graphs/' + name + '.png', bbox_inches='tight')
     np.save(results + '/' + name + '_labels.npy', labels)
 

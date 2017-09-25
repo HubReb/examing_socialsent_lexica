@@ -106,11 +106,13 @@ if __name__ == '__main__':
         clusters = ClusteredData(path, args['results'])
     else:
         clusters = ClusteredData(PATH_CLUSTERS, PATH + args['results'])
+    print(args['algorithm'])
     algorithms = {
-        'Aggl' : evaluate_agg(clusters, args['clusters'], args['matrix']),
-        'Kmeans' : evaluate_kmeans(clusters, args['clusters'], args['matrix']),
-        'HDBSCAN' : evaluate_hdbscan(clusters, args['matrix'])
+        'Aggl' : evaluate_agg,
+        'Kmeans' : evaluate_kmeans,
+        'HDBSCAN' : evaluate_hdbscan
     }
+
     if args['algorithm'] == 'all':
         print('Kmeans\n', '_' * 30)
         print(evaluate_kmeans(clusters, args['clusters'], args['matrix']))
@@ -120,4 +122,7 @@ if __name__ == '__main__':
         print(evaluate_hdbscan(clusters, args['matrix']))
     else:
         cluster_algorithm = algorithms[args['algorithm']]
-        print(cluster_algorithm)
+        if cluster_algorithm == 'HDBSCAN':
+            print(cluster_algorithm(clusters, args['matrix']))
+        else:
+            print(cluster_algorithm(clusters, args['clusters'], args['matrix']))

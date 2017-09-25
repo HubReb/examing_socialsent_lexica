@@ -39,7 +39,7 @@ The actual installation is done using
 
 > `python3 setup.py install`
 
-If you encounter any error, consult the documentation in the setup script.
+If you encounter any errors, consult the documentation in the setup script.
 
 ### Usage
 The easiest way to use this package is to simply call the `get_clusters.py`

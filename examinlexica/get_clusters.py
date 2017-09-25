@@ -55,7 +55,6 @@ def cluster_process(data, result_folder, matrix, number_of_clusters, algorithm):
         clusters = ClusteredData(path, 'temp_results')
     else:
         clusters = ClusteredData(PATH_CLUSTERS, 'temp_results')
-    shutil.rmtree('temp_results')
     results = ""
     if algorithm == 'all':
         if number_of_clusters:
@@ -64,18 +63,22 @@ def cluster_process(data, result_folder, matrix, number_of_clusters, algorithm):
         results += evaluate_hdbscan(clusters, matrix)
     else:
         algorithms = {
-            'Aggl' : evaluate_agg(clusters, args['clusters'], args['matrix']),
-            'Kmeans' : evaluate_kmeans(clusters, args['clusters'], args['matrix']),
-            'HDBSCAN' : evaluate_hdbscan(clusters, args['matrix'])
+            'Aggl' : evaluate_agg,
+            'Kmeans' : evaluate_kmeans,
+            'HDBSCAN' : evaluate_hdbscan
         }
         if number_of_clusters == 0 and algorithm != 'HDBSCAN':
             print('Cannot cluster without clusters!')
             sys.exit()
         evaluate_function = algorithms[algorithm]
-        results += evaluate_function
+        if algorithm == 'HDBSCAN':
+            results += evaluate_function(clusters, args['matrix'])
+        else:
+            results += evaluate_function(clusters, args['clusters'], args['matrix'])
     filename = result_folder + '/' + algorithm + '_' + matrix + '_' + str(number_of_clusters) + '.txt'
     with open(filename, 'w') as f:
         f.write(results)
+    shutil.rmtree('temp_results')
     return results
 
 if __name__ == '__main__':
