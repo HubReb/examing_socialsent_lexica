@@ -75,6 +75,7 @@ def cluster_data(data, algorithm, args, kwds, name, result_folder):
         v_z = [vis_z[j] for j in range(len(vis_z)) if labels[j] == u]
         ax.scatter(v_x, v_y, v_z, c=colors[i], s=150,label=str(u))
     plt.legend()
+    plt.show()
     plt.savefig('graphs/' + name + '.png', bbox_inches='tight')
     np.save(results + '/' + name + '_labels.npy', labels)
 
@@ -86,19 +87,18 @@ def start_cluster(data, result_path, matrix, number_of_clusters, algorithm):
     Arguments:
         data: data to be clustered
         result_path: path to the folder, in which the results will be stored
-        number_of_clusters:
-            number of clusters to be used for KMeans, spectral and agglomerative
-            clustering
         matrix:
             whether to use original sentiments (normal), negative values (minimum),
             maximum values (maximum) or all three (all)
+        number_of_clusters:
+            number of clusters to be used for KMeans, spectral and agglomerative
+            clustering
+        algorithm:
+            algorithm to use for clustering
     '''
     data = data[matrix][:]
     zero_rate = 0
     lines = 0
-    for line in data:
-        zero_rate += (len(line) - np.count_nonzero(line))/len(line)
-        lines += 1
     name = matrix + '_'
     if algorithm == 'all':
         algorithm = ['KMEANS', 'HDBSCAN', 'AGGL']
@@ -168,7 +168,6 @@ if __name__ == '__main__':
         default='all',
         choices=['Aggl', 'Kmeans', 'HDBSCAN'],
     )
-
     parser.add_argument(
         '-r',
         '--results',
